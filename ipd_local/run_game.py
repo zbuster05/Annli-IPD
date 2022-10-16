@@ -1,5 +1,7 @@
 import gspread
 import requests
+from tqdm import tqdm
+import types
 
 
 
@@ -23,52 +25,76 @@ def get_spreadsheet_data():
 
 
 # returns an array of dictionary objects, each being a student
-# student format: {name, {link, function_names, code} for no noise and noise}
+# student format: {name, link, function_names, code}
 #                 where function_names is a list
-# error handling: returns list of students whose code had issues in the pastebin
 def get_students_and_code():
-    
+
     data = get_spreadsheet_data()
     students = []
     for i in range(1, len(data)):
         student = {}
         student["student_name"] = data[i][1]
-        
+
         # accessing and parsing code from pastebin
-        for j in range(2):
-            link = data[i][2+j]
-            link = "https://pastebin.com/raw/" + link.split("pastebin.com/")[-1]
-            code = requests.get(link).text
+        index = 2
+        if NOISE:
+            index = 3
+        link = data[i][index]
+        link = "https://pastebin.com/raw/" + link.split("pastebin.com/")[-1] # link to raw text on pastebin
+        code = requests.get(link).text # retrieves the text
 
-            # getting function names
-            lines=code.split('\n')
-            function_names = []
-            for line in lines:
-                if line!="" and line[0]!=" " and line[0]!="#" and len(line)>1:
-                    try:
-                        function_names.append(line.split()[1].split("(")[0]) # splits at space by default
-                    except Exception as e:
-                        print("ERROR: ", e)
+        # getting function names
+        lines=code.split('\n')
+        function_names = []
+        for line in lines:
+            if line!="" and line[0]!=" " and line[0]!="#" and len(line)>1:
+                try:
+                    function_names.append(line.split()[1].split("(")[0]) # splits at space by default
+                except Exception as e:
+                    print("ERROR: ", e)
 
-            student_strategies = {}
-            student_strategies["link"] = link
-            student_strategies["function_names"] = function_names
-            student_strategies["code"] = code
-
-            if j == 0:
-                student["noise_false"] = student_strategies
-            else:
-                student["noise_true"] = student_strategies
+        student["link"] = link
+        student["function_names"] = function_names
+        student["code"] = code
         
         students.append(student)
     
     return students
 
 
+# load all the functions that will actually be playing
+# error handling: returns list of bad_kids whose code had issues in the pastebin
+def get_functions():
+    
+    students = get_students_and_code()
+    functions = []
+    bad_kids = []
+
+    for i in tqdm(range(len(students))):
+        try:
+            exec(students[i]["code"])
+            for function_name in students[i]["function_names"]:
+                functions.append(eval(function_name))
+        except Exception as e:
+            print("ERROR")
+            print(e)
+            print(students[i]["name"])
+            print(students[i]["code"])
+            bad_kids.append(students[i]["name"])
+    
+    loaded_functions = [f for f in locals().values() if type(f) == types.FunctionType]
+    print("Total functions: ", len(loaded_functions))
+    
+    print("These", len(bad_kids), "students messed up their code somehow: ", bad_kids)
+
+    return loaded_functions
 
 
 
-get_students_and_code()
+
+
+
+get_functions()
 
 # wks.update("A3", "student 2 updated!")
 
