@@ -2,6 +2,7 @@ import gspread
 import requests
 from tqdm import tqdm
 import types
+import random
 
 
 
@@ -62,6 +63,7 @@ def get_students_and_code():
     return students
 
 
+
 # load all the functions that will actually be playing
 # error handling: returns list of bad_kids whose code had issues in the pastebin
 def get_functions():
@@ -90,6 +92,8 @@ def get_functions():
     return loaded_functions
 
 
+
+# running the game!!!
 
 
 
