@@ -5,7 +5,7 @@ import types
 import random
 
 from game_specs import *
-
+from default_functions import *
 
 
 # retrieve latest list of submissions from google sheets
@@ -16,8 +16,6 @@ def get_spreadsheet_data():
     worksheet = spreadsheet.worksheet("Form Responses 1")
     print("Retrieved spreadsheet data.")
     return worksheet.get_all_values()
-
-
 
 
 # returns an array of dictionary objects, each being a student
@@ -63,7 +61,6 @@ def get_students_and_code():
     return students
 
 
-
 # load all the functions that will actually be playing
 # error handling: returns list of bad_kids whose code had issues in the pastebin
 def get_functions():
@@ -96,13 +93,21 @@ def get_functions():
     return loaded_functions
 
 
+# config for running game
+def get_game_inputs():
+    strats = all_default_functions + get_functions()
+    rounds = ROUNDS
+    blindness = []
+    if NOISE:
+        blindness = [NOISE_LEVEL, NOISE_LEVEL]
+    else:
+        blindness = [0,0]
+    return strats, rounds, blindness
 
-# running the game!!!
+game_inputs = get_game_inputs()
+for strat in game_inputs[0]:
+    print(strat.__name__)
 
-
-
-
-get_functions()
 
 # wks.update("A3", "student 2 updated!")
 

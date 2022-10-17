@@ -61,3 +61,5 @@ def nukeForTwotats(mymoves, othermoves, totalRounds, currentRound):
         if indices[i] == indices[i+1]-1:
             return True
     return False
+
+all_default_functions = [rat, silent, ratLast, rand, kindaRandom, titFortat, titForTwotats, nukeFortat, nukeForTwotats]
