@@ -2,10 +2,10 @@ import gspread
 import requests
 from tqdm import tqdm
 import types
-import random
 
 from game_specs import *
 from default_functions import *
+from simulation import *
 
 
 # retrieve latest list of submissions from google sheets
@@ -25,7 +25,10 @@ def get_students_and_code():
 
     data = get_spreadsheet_data()
     students = []
-    for i in range(1, len(data)):
+
+    print("Retrieving student code...")
+    
+    for i in tqdm(range(1, len(data))):
         student = {}
         student["student_name"] = data[i][1]
 
@@ -77,7 +80,7 @@ def get_functions():
             for function_name in students[i]["function_names"]:
                 functions.append(eval(function_name))
         except Exception as e:
-            print("---\n STUDENT CODE ERROR")
+            print("---\n Student code error")
             print(students[i]["student_name"])
             print(e)
             print("---")
@@ -89,8 +92,29 @@ def get_functions():
     
     print("These", len(bad_kids), "students messed up their code somehow: ", bad_kids)
 
-    print("Loaded", len(loaded_functions), "functions.")
+    good, bad = filter_functions(loaded_functions)
+    loaded_functions = good
+
+    print("Removed", len(bad), "functions for being bad.")
+
+    print("Loaded", len(loaded_functions), " good functions.")
     return loaded_functions
+
+def filter_functions(functions):
+    good_functions = []
+    bad_functions = []
+    for function in functions:
+        try:
+            output = function([],[],0)
+            if output:
+                pass
+            function([True]*10,[False]*10,10)
+            good_functions.append(function)
+        except Exception as e:
+            print("Bad function:", function.__name__)
+            print(e)
+            bad_functions.append(function)
+    return good_functions, bad_functions
 
 
 # config for running game
@@ -104,9 +128,8 @@ def get_game_inputs():
         blindness = [0,0]
     return strats, rounds, blindness
 
-game_inputs = get_game_inputs()
-for strat in game_inputs[0]:
-    print(strat.__name__)
+strats, rounds, blindness = get_game_inputs()
+run_simulation(strats, rounds, blindness)
 
 
 # wks.update("A3", "student 2 updated!")
