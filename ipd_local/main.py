@@ -5,10 +5,22 @@ from simulation import *
 from get_inputs import *
 import json
 
+PROBLEMS_LOG_LOCATION = "./problematic_functions.txt"
+BLACKLIST = "./blacklist.txt"
+
+def reset_output():
+    open(RAW_OUT_LOCATION, 'w').close()
+    open(SPECS_JSON_LOCATION, 'w').close()
+    open(PROBLEMS_LOG_LOCATION, 'w').close()
+    open(BLACKLIST, 'w').close()
+
+# EVERYTHING
+# fetches latest data, runs simulation, updates sheets of results
 def run_full_game():
+    reset_output()
     strats, rounds, blindness = get_game_inputs()
     raw_data = run_simulation(strats, rounds, blindness)
-    with open('./latest_raw_out.json', 'w') as fp:
+    with open(RAW_OUT_LOCATION, 'w') as fp:
         json.dump(raw_data, fp)
 
     specs = {
@@ -22,6 +34,8 @@ def run_full_game():
     }    
     with open('./latest_specs.json', 'w') as fp:
         json.dump(specs, fp)
+
+    # update_sheet()
     
     print("done!")
 

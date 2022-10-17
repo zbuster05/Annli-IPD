@@ -5,11 +5,11 @@ import copy
 import gspread
 import gspread_dataframe
 
-print("hi")
+from output_locations import *
 
 def get_clean_data():
     raw_data = {}
-    with open('./latest_raw_out.json', 'r') as fp:
+    with open(RAW_OUT_LOCATION, 'r') as fp:
         raw_data = json.load(fp)
     
     clean_data = copy.deepcopy(raw_data)
@@ -58,12 +58,15 @@ def get_ranking():
 
 def get_summary():
     specs = {}
-    with open('./latest_specs.json', 'r') as fp:
+    with open(SPECS_JSON_LOCATION, 'r') as fp:
         specs = json.load(fp)
     summary = pd.DataFrame.from_dict(specs, orient="index")
     return summary
 
 def update_sheet():
+    
+    print("Updating results spreadsheet...")
+    
     service_account = gspread.service_account(filename="service_account.json")
     spreadsheet = service_account.open("IPD LATEST RUN Results")
 
@@ -80,7 +83,7 @@ def update_sheet():
     gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=get_pairwise(),include_index=True,include_column_header=True,resize=True)
     
 
-    print("Updated results spreadsheet.")
+    # print("Updated results spreadsheet.")
         
-update_sheet()
+# update_sheet()
 

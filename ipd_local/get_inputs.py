@@ -6,6 +6,7 @@ import types
 from game_specs import *
 from default_functions import *
 from simulation import *
+from output_locations import *
 
 
 # retrieve latest list of submissions from google sheets
@@ -28,6 +29,11 @@ def get_students_and_code():
 
     print("Retrieving student code...")
     
+    with open(PROBLEMS_LOG_LOCATION, "a") as f:
+        f.write("---\nPROBLEMS!!!\n---\n***\n---\n")
+    bad_submission = []
+    bad_code = []
+
     for i in tqdm(range(1, len(data))):
         student = {}
         student["student_name"] = data[i][1]
@@ -38,7 +44,11 @@ def get_students_and_code():
             index = 3
         link = data[i][index]
         if not "https://pastebin.com/" in link:
-            print(data[i][1], " did not submit a pastebin link for this tournament.") # handles incorrect form filling out
+            bad_submission.append(data[i][1])
+            # with open(PROBLEMS_LOG_LOCATION, "a") as f:
+            #     warning = data[i][1] + " did not submit a valid pastebin link for this tournament.\n"
+            #     f.write(warning)            
+            # print(data[i][1], " did not submit a pastebin link for this tournament.") # handles incorrect form filling out
             continue
         link = "https://pastebin.com/raw/" + link.split("pastebin.com/")[-1] # link to raw text on pastebin
         code = requests.get(link).text # retrieves the text
@@ -51,7 +61,9 @@ def get_students_and_code():
                 try:
                     function_names.append(line.split()[1].split("(")[0]) # splits at space by default
                 except Exception as e:
-                    print(student["student_name"], "ERROR: ", e)
+                    code_issue = student["student_name"] + " had the following error in their code: " + e
+                    bad_code.append(code_issue)
+                    # print(student["student_name"], "ERROR: ", e)
 
         student["link"] = link
         student["function_names"] = function_names
@@ -59,6 +71,18 @@ def get_students_and_code():
         
         # print("---", student["student_name"], "'s code retrieved.")
         students.append(student)
+
+    # log problems
+    with open(PROBLEMS_LOG_LOCATION, "a") as f:
+        f.write("BAD SUBMISSION:\nThe following students did not submit a valid pastebin link\n\n")
+        for name in bad_submission:
+            s = name+"\n"
+            f.write(s)
+        f.write("---\n***\n---\nBAD CODE:\nThe following students had COMPILING issues with code")
+        for issue in bad_submission:
+            s = issue+"\n"
+            f.write(s)
+        
     
     print("Retrieved all student code.")
     return students

@@ -50,7 +50,10 @@ def run_simulation(strats, rounds, blindness):
                 
                 try:
                     with suppress_stdout():
-                        player1move = bool(player1(player1moves, player2moves, i))
+                        player1move = player1(player1moves, player2moves, i)
+                        if player1move==None:
+                            raise Exception("returned none")
+                        player1move = bool(player1move)
                 except Exception as e:
                     print("\nBad function (player1):", player1.__name__)
                     print(e)
@@ -61,7 +64,10 @@ def run_simulation(strats, rounds, blindness):
                 
                 try:
                     with suppress_stdout():
-                        player2move = bool(player2(player2moves, player1moves, i))
+                        player2move = player2(player2moves, player1moves, i)
+                        if player2move==None:
+                            raise Exception("returned none")
+                        player2move = bool(player2move)
                 except Exception as e:
                     print("\nBad function (player2):", player2.__name__)
                     print(e)

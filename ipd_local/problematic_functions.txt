@@ -1,0 +1,28 @@
+---
+PROBLEMS!!!
+---
+***
+---
+BAD SUBMISSION:
+The following students did not submit a valid pastebin link
+
+April Zhang
+Hannah Drew
+April Zhang
+Ethan Kim
+Julian Kleinknecht
+Annli Zhu
+Laura Chen
+Gabriel
+---
+***
+---
+BAD CODE:
+The following students had COMPILING issues with codeApril Zhang
+Hannah Drew
+April Zhang
+Ethan Kim
+Julian Kleinknecht
+Annli Zhu
+Laura Chen
+Gabriel
