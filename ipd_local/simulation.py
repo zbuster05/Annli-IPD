@@ -27,7 +27,6 @@ def run_simulation(strats, rounds, blindness):
 
         start = time.time()
         dat={}
-        avg=0
 
         for player2 in strats:
             
@@ -75,8 +74,11 @@ def run_simulation(strats, rounds, blindness):
                 player1moves.append(player1move)
                 player2moves.append(player2move)
             
-            if not (player1_is_valid and player2_is_valid):
+            if not player1_is_valid:
                 break
+                       
+            if not player2_is_valid:
+                continue
 
             for i in range(rounds):
                 if player1moves[i]:
@@ -96,7 +98,6 @@ def run_simulation(strats, rounds, blindness):
                 results['details']=[player1moves, player2moves]
             
             dat[player2.__name__]=results
-            avg+=results["score"][1]
 
         # dat["Average"]=float(avg/(len(strats)))
         # dat["Total"]=avg

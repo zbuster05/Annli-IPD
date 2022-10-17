@@ -1,5 +1,5 @@
 # simulation specs
-NOISE = False # whether or not this tournament has noise
+NOISE = True # whether or not this tournament has noise
 NOISE_LEVEL = 0.1 # percentage noise; only used if NOISE is set to True
 ROUNDS = 20 # number of rounds each strategy plays against each other strategy
 
