@@ -4,13 +4,7 @@ from tqdm import tqdm
 import types
 import random
 
-
-
-
-# TOURNAMENT SPECS
-NOISE = False # whether or not this tournament has noise
-NOISE_LEVEL = 0.1 # percentage noise; only used if NOISE is set to True
-
+from game_specs import *
 
 
 
@@ -20,6 +14,7 @@ def get_spreadsheet_data():
     service_account = gspread.service_account(filename="service_account.json")
     spreadsheet = service_account.open("IPD Player Strategies")
     worksheet = spreadsheet.worksheet("Form Responses 1")
+    print("Retrieved spreadsheet data.")
     return worksheet.get_all_values()
 
 
@@ -41,6 +36,9 @@ def get_students_and_code():
         if NOISE:
             index = 3
         link = data[i][index]
+        if not "https://pastebin.com/" in link:
+            print(data[i][i], " did not submit a pastebin link for this tournament.") # handles incorrect form filling out
+            continue
         link = "https://pastebin.com/raw/" + link.split("pastebin.com/")[-1] # link to raw text on pastebin
         code = requests.get(link).text # retrieves the text
 
@@ -48,18 +46,20 @@ def get_students_and_code():
         lines=code.split('\n')
         function_names = []
         for line in lines:
-            if line!="" and line[0]!=" " and line[0]!="#" and len(line)>1:
+            if len(line)>4 and line[0:4]=="def":
                 try:
                     function_names.append(line.split()[1].split("(")[0]) # splits at space by default
                 except Exception as e:
-                    print("ERROR: ", e)
+                    print(student["student_name"], "ERROR: ", e)
 
         student["link"] = link
         student["function_names"] = function_names
         student["code"] = code
         
+        # print("---", student["student_name"], "'s code retrieved.")
         students.append(student)
     
+    print("Retrieved all student code.")
     return students
 
 
@@ -73,22 +73,26 @@ def get_functions():
     bad_kids = []
 
     for i in tqdm(range(len(students))):
+        # print("Loading student's functions:", students[i]["student_name"])
         try:
             exec(students[i]["code"])
+            # print("this is okay")
             for function_name in students[i]["function_names"]:
                 functions.append(eval(function_name))
         except Exception as e:
-            print("ERROR")
+            print("---\n STUDENT CODE ERROR")
+            print(students[i]["student_name"])
             print(e)
-            print(students[i]["name"])
-            print(students[i]["code"])
-            bad_kids.append(students[i]["name"])
+            print("---")
+            # if students[i]["student_name"] == "Riley Sze":
+            #     print(students[i]["code"])
+            bad_kids.append(students[i]["student_name"])
     
     loaded_functions = [f for f in locals().values() if type(f) == types.FunctionType]
-    print("Total functions: ", len(loaded_functions))
     
     print("These", len(bad_kids), "students messed up their code somehow: ", bad_kids)
 
+    print("Loaded", len(loaded_functions), "functions.")
     return loaded_functions
 
 
