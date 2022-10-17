@@ -129,10 +129,3 @@ def get_game_inputs():
         blindness = [0,0]
     return strats, rounds, blindness
 
-# actually running game from start to finish!!
-def run_full_game():
-    strats, rounds, blindness = get_game_inputs()
-    raw_data = run_simulation(strats, rounds, blindness)
-    print("done!")
-
-run_full_game()
