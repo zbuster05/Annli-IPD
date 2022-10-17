@@ -3,10 +3,9 @@ from default_functions import *
 from data_analysis import *
 from simulation import *
 from get_inputs import *
+from output_locations import *
 import json
 
-PROBLEMS_LOG_LOCATION = "./problematic_functions.txt"
-BLACKLIST = "./blacklist.txt"
 
 def reset_output():
     open(RAW_OUT_LOCATION, 'w').close()

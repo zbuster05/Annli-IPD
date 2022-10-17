@@ -83,7 +83,7 @@ def update_sheet():
     gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=get_pairwise(),include_index=True,include_column_header=True,resize=True)
     
 
-    # print("Updated results spreadsheet.")
+    print("Updated results spreadsheet.")
         
-# update_sheet()
+update_sheet()
 

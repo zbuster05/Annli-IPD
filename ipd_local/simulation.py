@@ -4,6 +4,7 @@ import time
 from tqdm import tqdm
 
 from game_specs import *
+from output_locations import *
 
 from contextlib import contextmanager
 import sys, os
@@ -21,6 +22,10 @@ def suppress_stdout():
 
 def run_simulation(strats, rounds, blindness):
     data = {}
+    
+    with open(PROBLEMS_LOG_LOCATION, "a") as f:
+        f.write("BAD CODE (RUNTIME)\nThe following functions had errors while playing the game, and thus were removed:\n\n")
+    
     for player1 in tqdm(strats):
         
         player1_is_valid = True
@@ -55,9 +60,12 @@ def run_simulation(strats, rounds, blindness):
                             raise Exception("returned none")
                         player1move = bool(player1move)
                 except Exception as e:
-                    print("\nBad function (player1):", player1.__name__)
-                    print(e)
-                    print("Removing from game.\n ---")
+                    error = player1.__name__ + "\nError: " + str(e) + "\n"
+                    with open(PROBLEMS_LOG_LOCATION, "a") as f:
+                        f.write(error)                   
+                    # print("\nBad function (player1):", player1.__name__)
+                    # print(e)
+                    # print("Removing from game.\n ---")
                     strats.remove(player1)
                     player1_is_valid = False
                     break
@@ -69,9 +77,12 @@ def run_simulation(strats, rounds, blindness):
                             raise Exception("returned none")
                         player2move = bool(player2move)
                 except Exception as e:
-                    print("\nBad function (player2):", player2.__name__)
-                    print(e)
-                    print("Removing from game.\n ---")
+                    error = player2.__name__ + "\nError: " + str(e) + "\n"
+                    with open(PROBLEMS_LOG_LOCATION, "a") as f:
+                        f.write(error) 
+                    # print("\nBad function (player2):", player2.__name__)
+                    # print(e)
+                    # print("Removing from game.\n ---")
                     strats.remove(player2)
                     player2_is_valid = False
                     break
@@ -121,5 +132,8 @@ def run_simulation(strats, rounds, blindness):
     #     for j in list(clean[k].keys()):
     #       if (type(clean[k][j])== dict):
     #         clean[k][j] = list(clean[k][j].values())[0]
+
+    with open(PROBLEMS_LOG_LOCATION, "a") as f:
+        f.write("\n---\n***\n---\n\n")
     
     return data

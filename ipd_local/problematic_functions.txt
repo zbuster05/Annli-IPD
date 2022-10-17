@@ -3,8 +3,9 @@ PROBLEMS!!!
 ---
 ***
 ---
-BAD SUBMISSION:
-The following students did not submit a valid pastebin link
+
+BAD SUBMISSION
+The following students did not submit a valid pastebin link:
 
 April Zhang
 Hannah Drew
@@ -14,15 +15,162 @@ Julian Kleinknecht
 Annli Zhu
 Laura Chen
 Gabriel
+
 ---
 ***
 ---
-BAD CODE:
-The following students had COMPILING issues with codeApril Zhang
-Hannah Drew
-April Zhang
-Ethan Kim
-Julian Kleinknecht
-Annli Zhu
-Laura Chen
-Gabriel
+
+CANNOT PARSE
+The following students wrote code that could not be parsed into functions:
+
+
+---
+***
+---
+
+BAD CODE (COMPILE)
+The following students had errors in their code that prevented compiling (check syntax):
+
+Riley Sze
+Error: unindent does not match any outer indentation level (<string>, line 26)
+Connor M
+Error: expected an indented block after function definition on line 101 (<string>, line 102)
+Cole Bregman
+Error: unindent does not match any outer indentation level (<string>, line 33)
+Kevin Hwong 
+Error: invalid syntax (<string>, line 37)
+Steven Liu
+Error: unindent does not match any outer indentation level (<string>, line 4)
+Rayan Gummiid
+Error: invalid syntax (<string>, line 1)
+Rayan Gummiid
+Error: invalid syntax (<string>, line 1)
+Christine Zhao
+Error: unindent does not match any outer indentation level (<string>, line 22)
+
+---
+***
+---
+
+BAD CODE (IN/OUT)
+The following functions had errors related to input or output:
+
+NICK_A_6
+Error: name 'math' is not defined
+NICK_A_9
+Error: name 'NICK_A_4' is not defined
+ArielleC1
+Error: ArielleC1() missing 1 required positional argument: 'currentRound'
+ArielleC2
+Error: ArielleC2() missing 1 required positional argument: 'currentRound'
+ArielleC3
+Error: ArielleC3() missing 1 required positional argument: 'currentRound'
+ArielleC4
+Error: ArielleC4() missing 1 required positional argument: 'currentRound'
+ArielleC5
+Error: ArielleC5() missing 1 required positional argument: 'currentRound'
+ArielleC6
+Error: ArielleC6() missing 1 required positional argument: 'currentRound'
+ArielleC7
+Error: ArielleC7() missing 1 required positional argument: 'currentRound'
+ArielleC8
+Error: ArielleC8() missing 1 required positional argument: 'currentRound'
+ArielleC9
+Error: ArielleC9() missing 1 required positional argument: 'currentRound'
+ArielleC10
+Error: ArielleC10() missing 1 required positional argument: 'currentRound'
+AlexT2Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT3Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT4Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT5Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT6Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT7Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT8Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT9Noise
+Error: name 'AlexT1Noise' is not defined
+AlexT10Noise
+Error: name 'AlexT1Noise' is not defined
+tFTCalculatedSilentHIGH
+Error: tFTCalculatedSilentHIGH() missing 1 required positional argument: 'currentRound'
+tFTCalculatedSilent
+Error: tFTCalculatedSilent() missing 1 required positional argument: 'currentRound'
+completelyRandom
+Error: completelyRandom() missing 1 required positional argument: 'currentRound'
+calculatedRandom
+Error: calculatedRandom() missing 1 required positional argument: 'currentRound'
+titForTwotatsChecking
+Error: titForTwotatsChecking() missing 1 required positional argument: 'currentRound'
+LASTFEWtitFortat
+Error: LASTFEWtitFortat() missing 1 required positional argument: 'currentRound'
+LASTFEWtitForTwotatsChecking
+Error: LASTFEWtitForTwotatsChecking() missing 1 required positional argument: 'currentRound'
+CHECKINGpatternSeeker
+Error: CHECKINGpatternSeeker() missing 1 required positional argument: 'currentRound'
+alwaysNice
+Error: alwaysNice() missing 1 required positional argument: 'currentRound'
+NicoB3
+Error: argument of type 'int' is not iterable
+
+---
+***
+---
+
+BAD CODE (RUNTIME)
+The following functions had errors while playing the game, and thus were removed:
+
+NICK_A_4
+Error: name 'numpy' is not defined
+RayanGstrategy1noise
+Error: returned none
+AlexT1Noise
+Error: list index out of range
+ThomasR1Noise
+Error: list index out of range
+ThomasR3Noise
+Error: list index out of range
+ThomasR5Noise
+Error: list index out of range
+ThomasR7Noise
+Error: list index out of range
+ThomasR9Noise
+Error: list index out of range
+LucaL4Noise
+Error: list index out of range
+NicoB4
+Error: list index out of range
+NicoB6
+Error: list index out of range
+NicoB8
+Error: list index out of range
+RayanGstrategy3noise
+Error: returned none
+RayanGstrategy2noise
+Error: list indices must be integers or slices, not tuple
+ThomasR2Noise
+Error: list index out of range
+ThomasR6Noise
+Error: list index out of range
+ThomasR10Noise
+Error: list index out of range
+NicoB5
+Error: list index out of range
+NicoB9
+Error: list index out of range
+ThomasR4Noise
+Error: list index out of range
+NicoB7
+Error: list index out of range
+ThomasR8Noise
+Error: list index out of range
+
+---
+***
+---
+
