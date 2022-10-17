@@ -38,7 +38,7 @@ def get_students_and_code():
             index = 3
         link = data[i][index]
         if not "https://pastebin.com/" in link:
-            print(data[i][i], " did not submit a pastebin link for this tournament.") # handles incorrect form filling out
+            print(data[i][1], " did not submit a pastebin link for this tournament.") # handles incorrect form filling out
             continue
         link = "https://pastebin.com/raw/" + link.split("pastebin.com/")[-1] # link to raw text on pastebin
         code = requests.get(link).text # retrieves the text
@@ -105,11 +105,12 @@ def filter_functions(functions):
     bad_functions = []
     for function in functions:
         try:
-            output = function([],[],0)
-            if output:
-                pass
-            function([True]*10,[False]*10,10)
-            good_functions.append(function)
+            with suppress_stdout():
+                output = function([],[],0)
+                if output:
+                    pass
+                function([True]*10,[False]*10,10)
+                good_functions.append(function)
         except Exception as e:
             print("Bad function:", function.__name__)
             print(e)
@@ -128,9 +129,10 @@ def get_game_inputs():
         blindness = [0,0]
     return strats, rounds, blindness
 
-strats, rounds, blindness = get_game_inputs()
-run_simulation(strats, rounds, blindness)
+# actually running game from start to finish!!
+def run_full_game():
+    strats, rounds, blindness = get_game_inputs()
+    raw_data = run_simulation(strats, rounds, blindness)
+    print("done!")
 
-
-# wks.update("A3", "student 2 updated!")
-
+run_full_game()

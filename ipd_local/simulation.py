@@ -1,12 +1,27 @@
 import random
 import copy
 import time
+from tqdm import tqdm
 
 from game_specs import *
 
+from contextlib import contextmanager
+import sys, os
+
+@contextmanager
+def suppress_stdout():
+    with open(os.devnull, "w") as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        try:  
+            yield
+        finally:
+            sys.stdout = old_stdout
+
+
 def run_simulation(strats, rounds, blindness):
     data = {}
-    for player1 in strats:
+    for player1 in tqdm(strats):
         
         player1_is_valid = True
 
@@ -35,21 +50,23 @@ def run_simulation(strats, rounds, blindness):
                         player2moves[-1] = not(player2moves[-1])
                 
                 try:
-                    player1move = player1(player1moves, player2moves, i)
+                    with suppress_stdout():
+                        player1move = player1(player1moves, player2moves, i)
                 except Exception as e:
-                    print("Bad function:", player1.__name__)
+                    print("\nBad function (player1):", player1.__name__)
                     print(e)
-                    print("Removing player1 from game.\n ---")
+                    print("Removing from game.\n ---")
                     strats.remove(player1)
                     player1_is_valid = False
                     break
                 
                 try:
-                    player2move = player2(player2moves, player1moves, i)
+                    with suppress_stdout():
+                        player2move = player2(player2moves, player1moves, i)
                 except Exception as e:
-                    print("Bad function:", player2.__name__)
+                    print("\nBad function (player2):", player2.__name__)
                     print(e)
-                    print("Removing player2 from game.\n ---")
+                    print("Removing from game.\n ---")
                     strats.remove(player2)
                     player2_is_valid = False
                     break
@@ -81,22 +98,21 @@ def run_simulation(strats, rounds, blindness):
             dat[player2.__name__]=results
             avg+=results["score"][1]
 
-        dat["Average"]=float(avg/(len(strats)))
-        dat["Total"]=avg
+        # dat["Average"]=float(avg/(len(strats)))
+        # dat["Total"]=avg
         data[player1.__name__]=dat
         #print(player1.__name__, "took", time.time()-start, "seconds")
     
-    clean = copy.deepcopy(data)
-    for k in list(clean.keys()):
-        for j in list(clean[k].keys()):
-          if (type(clean[k][j])== dict):
-            for key in list(clean[k][j].keys()):
-                if key == "details":
-                    del clean[k][j][key]
-    for k in list(clean.keys()):
-        for j in list(clean[k].keys()):
-          if (type(clean[k][j])== dict):
-            clean[k][j] = list(clean[k][j].values())[0]
+    # clean = copy.deepcopy(data)
+    # for k in list(clean.keys()):
+    #     for j in list(clean[k].keys()):
+    #       if (type(clean[k][j])== dict):
+    #         for key in list(clean[k][j].keys()):
+    #             if key == "details":
+    #                 del clean[k][j][key]
+    # for k in list(clean.keys()):
+    #     for j in list(clean[k].keys()):
+    #       if (type(clean[k][j])== dict):
+    #         clean[k][j] = list(clean[k][j].values())[0]
     
-    
-    return [clean, data]
+    return data
