@@ -85,5 +85,5 @@ def update_sheet():
 
     print("Updated results spreadsheet.")
         
-update_sheet()
+# update_sheet()
 

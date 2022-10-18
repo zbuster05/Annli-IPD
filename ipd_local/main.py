@@ -11,7 +11,7 @@ def reset_output():
     open(RAW_OUT_LOCATION, 'w').close()
     open(SPECS_JSON_LOCATION, 'w').close()
     open(PROBLEMS_LOG_LOCATION, 'w').close()
-    open(BLACKLIST, 'w').close()
+    # open(BLACKLIST, 'w').close()
 
 # EVERYTHING
 # fetches latest data, runs simulation, updates sheets of results
@@ -34,8 +34,9 @@ def run_full_game():
     with open('./latest_specs.json', 'w') as fp:
         json.dump(specs, fp)
 
-    # update_sheet()
+    update_sheet()
     
     print("done!")
 
 run_full_game()
+# update_sheet()
