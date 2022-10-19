@@ -23,7 +23,6 @@ def run_simulation(strats, rounds, blindness):
     print("Running simulation...")
     
     data = {}
-
     bad_functions = []
     
     with open(PROBLEMS_LOG_LOCATION, "a") as f:
@@ -134,8 +133,10 @@ def run_simulation(strats, rounds, blindness):
 
 
 
-def reload_blacklist(strats, rounds, blindness):
+def reload_blacklist(all_strats, rounds, blindness):
 
+    strats = all_strats.copy()
+    
     bad_functions = []
     
     with open(PROBLEMS_LOG_LOCATION, "a") as f:
@@ -209,3 +210,5 @@ def reload_blacklist(strats, rounds, blindness):
 
     with open(PROBLEMS_LOG_LOCATION, "a") as f:
         f.write("\n---\n***\n---\n\n")
+
+    # print()

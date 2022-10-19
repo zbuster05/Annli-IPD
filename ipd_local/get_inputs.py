@@ -147,13 +147,18 @@ def get_game_inputs():
                 blindness = [NOISE_LEVEL, NOISE_LEVEL]
             else:
                 blindness = [0,0]
-            reload_blacklist(all_default_functions + all_functions, ROUNDS, blindness)
+            if INCLUDE_DEFAULTS:
+                reload_blacklist(all_default_functions + all_functions, ROUNDS, blindness)
+            else:
+                reload_blacklist(all_functions, ROUNDS, blindness)
+            # print(all_functions)
+
             print("Reloaded blacklisted functions.")       
   
         functions_dict = {}
         for func in all_functions:
             functions_dict[func.__name__] = func
-        
+        # print(functions_dict)
         blacklist = []
         with open(BLACKLIST, "r") as f:
             blacklist = f.readlines()
@@ -202,7 +207,9 @@ def get_game_inputs():
 
 # config for running game
 
-    strats = all_default_functions + get_functions()
+    strats = get_functions()
+    if INCLUDE_DEFAULTS:
+        strats = all_default_functions + strats
     rounds = ROUNDS
     blindness = []
     if NOISE:
