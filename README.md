@@ -31,4 +31,4 @@ Usable interface for running and testing code for the Iterated Prisoner's Dilemm
 
 4. **View results.** View the results of the game at the results spreadsheet that has been shared with you. This sheet only saves the results of the latest run, so if you want to save these results permanently, create a copy.
 
-5. **Read error log.** All submissions that had issues of any sort are logged in `problem`
+5. **Read error log.** All submissions that had issues of any sort are logged in `problems.txt`. Make sure to read this file and notify students of their issues so they can fix their code.
