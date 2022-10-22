@@ -1,3 +1,6 @@
+# all default functions of the simulation can be found here. 
+# presumably written by ian lum '22
+
 import random
 
 def rat(mymoves, othermoves, currentRound):

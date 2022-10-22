@@ -1,12 +1,16 @@
+# main!!
+# run this file to run the actual simulation
+
+import json
+
 from game_specs import *
 from default_functions import *
 from data_analysis import *
 from simulation import *
 from get_inputs import *
 from output_locations import *
-import json
 
-
+# clear output documents
 def reset_output():
     open(RAW_OUT_LOCATION, 'w').close()
     open(SPECS_JSON_LOCATION, 'w').close()
@@ -16,12 +20,16 @@ def reset_output():
 # EVERYTHING
 # fetches latest data, runs simulation, updates sheets of results
 def run_full_game():
-    reset_output()
-    strats, rounds, blindness = get_game_inputs()
-    raw_data = run_simulation(strats, rounds, blindness)
+    
+    reset_output() # clears output documents
+    
+    strats, rounds, blindness = get_game_inputs() # fetches game inputs. function defined in get_inputs.py
+    
+    raw_data = run_simulation(strats, rounds, blindness) # runs simulation. function defined in simulation.py
     with open(RAW_OUT_LOCATION, 'w') as fp:
-        json.dump(raw_data, fp)
+        json.dump(raw_data, fp) # dumps raw data of simulation to output location
 
+    # dumps game specs to output location
     specs = {
         "Noise": NOISE,
         "Noise Level (if applicable)": NOISE_LEVEL,
@@ -34,9 +42,9 @@ def run_full_game():
     with open('./latest_specs.json', 'w') as fp:
         json.dump(specs, fp)
 
-    update_sheet()
+    update_sheet() # updates spreadsheet
     
     print("done!")
 
+# runs full game!
 run_full_game()
-# update_sheet()
