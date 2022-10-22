@@ -1,13 +1,34 @@
-# IPD
+# IPD Online (but not online)
 
-## Overview
+Usable interface for running and testing code for the Iterated Prisoner's Dilemma game :)
 
-Usable interface for running and participating in the Iterated Prisoner's Dilemma game for Microeconomics
+# Get Started
 
-## User Story
+1. **Download code.** Clone the repository:
+    ```bash
+    git clone https://github.com/annliz/IPD
+    ```
 
-Allison is a sophomore interested in behavioral science, sociology, and political science. This year, she is excited to be taking more classes related to her interests. In particular, she managed to secure a coveted spot in Patrick’s microeconomics class and can’t wait to participate in all the fun games and simulations that her friends on the soccer team have told her about.
+2. **Get spreadsheet API key.** For security reasons, the API key is not included in the Github repository. *You need this key to run the code*. Contact Annli for the key. Then, download this file and move it into the folder `ipd_local`. Make sure it is still named `service_account.json`.
 
-Midway through the semester, Patrick introduces the class to the iterated prisoner’s dilemma (IPD) game, an extended version of the classic game theory question. Allison is ecstatic! This is just her type of thing. Then, Patrick tells the class that in order to implement a strategy for the game, students will need to code functions in Python and submit them on Canvas. Allison is confused. What is a function? Didn’t I sign up for an econ class, not CS? She sees her classmate Jerry next to her open up his code editor and begin typing excitedly. This is so unfair, she thinks, how am I supposed to compete against these people? Allison walks out of class demotivated and wondering if she made a mistake by taking this class.
+3. **Install necessary libraries.** The following Python libraries are used in this code: `numpy`, `pandas`, `gspread`, `gspread_dataframe`, `requests`, `tqdm`. Make sure you have them installed with:
+    ```bash
+    pip3 install LIBRARYNAME
+    ```
 
-The next class, Patrick announces that changes are being made to the IPD game. A new platform has been created for the game that doesn’t involve coding! Patrick demonstrates running a few rounds of pre existing strategies from the platform and Allison watches in amazement as each round’s history and statistics appear neatly on the screen. Then, the class is shown how to implement their own strategy in just a few simple steps. Take that Jerry! Allison is relieved; she can finally employ the strategy she has been constructing that she is confident will win.
+4. **Get access to submission and results spreadsheets.** This is where students submit their code, and where result are logged. Ask Annli for access to the Google sheets.
+
+# Running a Simulation
+
+1. **Navigate to folder.** In your terminal, navigate to the folder `ipd_local` to run the simulation on your machine.
+
+2. **Specifcy game parameters.** Edit the file `game_specs.py` to change game parameters such as noise level and score matrix.
+
+3. **Run the game.** Run the actual simulation:
+    ```bash
+    python3 main.py
+    ```
+
+4. **View results.** View the results of the game at the results spreadsheet that has been shared with you. This sheet only saves the results of the latest run, so if you want to save these results permanently, create a copy.
+
+5. **Read error log.** All submissions that had issues of any sort are logged in `problem`

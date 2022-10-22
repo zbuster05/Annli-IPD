@@ -12,7 +12,7 @@ SPECS_JSON_LOCATION = "./latest_specs.json"
 # this is where all issues that arise when the simulation is run are logged
 # helps user identify which students need to fix their code, and how
 # refreshed every run
-PROBLEMS_LOG_LOCATION = "./problematic_functions.txt"
+PROBLEMS_LOG_LOCATION = "./problems.txt"
 
 # list of functions that have issues
 # refreshed when simulation is run with RELOAD_BLACKLIST = True
