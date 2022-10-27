@@ -22,7 +22,7 @@ Usable interface for running and testing code for the Iterated Prisoner's Dilemm
 
 1. **Navigate to folder.** In your terminal, navigate to the folder `ipd_local` to run the simulation on your machine.
 
-2. **Specifcy game parameters.** Edit the file `game_specs.py` to change game parameters such as noise level and score matrix.
+2. **Specify game parameters.** Edit the file `game_specs.py` to change game parameters such as noise level and score matrix.
 
 3. **Run the game.** Run the actual simulation:
     ```bash
