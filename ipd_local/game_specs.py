@@ -1,7 +1,7 @@
 # simulation specs
 NOISE = False # whether or not this tournament has noise
 NOISE_LEVEL = 0.1 # percentage noise; only used if NOISE is set to True
-ROUNDS = 80 # number of rounds each strategy plays against each other strategy
+ROUNDS = 20 # number of rounds each strategy plays against each other strategy
 
 # scores distribution, assuming symmetry
 POINTS_BOTH_RAT = 1             # score for both players if they both rat
@@ -11,7 +11,7 @@ POINTS_BOTH_COOPERATE = 5       # score for both players when they cooperate
 
 # run with default functions (always rat, always silent, tit for tat, etc).
 # all default functions can be found in defaul_functions.py
-INCLUDE_DEFAULTS = True
+INCLUDE_DEFAULTS = False
 
 # whether or not to reload blacklisted functions
 # not reloading speeds up simulation.
