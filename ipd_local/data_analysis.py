@@ -108,7 +108,17 @@ def update_sheet():
     # updates pairwise scores
     pairwise_sheet = spreadsheet.worksheet("Pairwise Scores")
     pairwise_sheet.clear()
-    gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=get_pairwise(),include_index=True,include_column_header=True,resize=True)
+    
+    # reverse order of score reporting
+    clean_data = get_pairwise()
+    for k in list(clean_data.keys()):
+        for j in list(clean_data[k].keys()):
+            # reverse first and second element
+            rev = []
+            rev.append(clean_data[k][j][1])
+            rev.append(clean_data[k][j][0])
+            clean_data[k][j] = rev
+    
+    gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=clean_data,include_index=True,include_column_header=True,resize=True)
     
     print("Updated results spreadsheet.")
-

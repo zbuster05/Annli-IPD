@@ -33,7 +33,7 @@ BAD CODE (COMPILE)
 The following students had errors in their code that prevented compiling (check syntax):
 
 Rayan Gummiid
-Error: invalid syntax (<string>, line 1)
+Error: leading zeros in decimal integer literals are not permitted; use an 0o prefix for octal integers (<string>, line 175)
 Riley Sze
 Error: unindent does not match any outer indentation level (<string>, line 26)
 Carina Totty
