@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "ipd_local"
+version = "0.1.0"
+description = ""
+authors = ["David Freifeld <freifeld.david@gmail.com>", "Zachary Sayyah <zakary.saya@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2" # for unit testing
+pytest-cov = "^3.0.0" # for checking test coverage
+mypy = "^0.931" # for type checking
+interrogate = "^1.5.0"  # for checking doc coverage
+pytest-watch = "^4.2.0" # for auto-running tests
+pdoc = "^10.0.3" # for nice documentation
+py-spy = "^0.3.11" # for profiling
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
