@@ -10,19 +10,17 @@ from simulation import *
 from get_inputs import *
 from output_locations import *
 
-# clear output documents
-def reset_output():
-    open(RAW_OUT_LOCATION, 'w').close()
-    open(SPECS_JSON_LOCATION, 'w').close()
-    open(PROBLEMS_LOG_LOCATION, 'w').close()
-    # open(BLACKLIST, 'w').close()
+from loguru import logger
+import sys
 
 # EVERYTHING
 # fetches latest data, runs simulation, updates sheets of results
 def run_full_game():
-    
-    reset_output() # clears output documents
-    
+
+    logger.remove()
+    logger.add(PROBLEMS_LOG_LOCATION)
+    logger.info("Starting!")
+
     strats, rounds, blindness = get_game_inputs() # fetches game inputs. function defined in get_inputs.py
     
     raw_data = run_simulation(strats, rounds, blindness) # runs simulation. function defined in simulation.py
