@@ -4,6 +4,8 @@ from tqdm import tqdm
 from game_specs import *
 from output_locations import *
 
+from loguru import logger
+
 from contextlib import contextmanager
 import sys, os
 
@@ -13,7 +15,7 @@ def suppress_stdout():
     with open(os.devnull, "w") as devnull:
         old_stdout = sys.stdout
         sys.stdout = devnull
-        try:  
+        try:
             yield
         finally:
             sys.stdout = old_stdout
@@ -25,26 +27,22 @@ def suppress_stdout():
     # "score": list of the scores for the players
     # "details": list of each player's moves on each round
 def run_simulation(strats, rounds, blindness):
-    
+
     print("Running simulation...")
-    
+
     data = {}
     bad_functions = []
-    
-    # log issues
-    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-        f.write("BAD CODE (RUNTIME) - NEW\nThe following functions had errors while playing the game and were blacklisted. If any, please rerun game with RELOAD_BLACKLIST = False:\n\n")
-    
+
     # for every first player
     for player1 in tqdm(strats):
-        
+
         player1_is_valid = True
-        
+
         dat={} # datapoint for this player. terrible name choice ian.
 
         # play against all other players
         for player2 in strats:
-            
+
             # ensure player is still valid (did not error)
             if not player1_is_valid:
                 break
@@ -55,10 +53,10 @@ def run_simulation(strats, rounds, blindness):
             player2moves = []
             results={}
             results['score']=[0, 0]
-            
+
             # play number of rounds specified by input parameter
             for i in range(rounds):
-                
+
                 # incorporate noise, if applicable
                 # this code can be optimized but since i just took it from someone else i'm just leaving it like this for now
                 if blindness[0] > 0:
@@ -67,7 +65,7 @@ def run_simulation(strats, rounds, blindness):
                 if blindness[1] > 0:
                     if random.random()<blindness[1] and len(player2moves):
                         player2moves[-1] = not(player2moves[-1])
-                
+
                 # get player1's move for this round
                 try:
                     with suppress_stdout():
@@ -76,14 +74,12 @@ def run_simulation(strats, rounds, blindness):
                             raise Exception("returned none") # handle None separately because it is cast to False with the bool() function, which is not desired
                         player1move = bool(player1move) # casting allows player to output binary int instead of bool, if desired
                 except Exception as e:
-                    error = player1.__name__ + "\nError: " + str(e) + "\n"
-                    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-                        f.write(error)                   
+                    logger.error(f"Error running function {player1.__name__}: {str(e)}")
                     bad_functions.append(player1)
                     strats.remove(player1) # remove player1 from the simulation, so future functions don't play against it
                     player1_is_valid = False # player1 errored, so it is no longer valid
                     break # stop simulating this matchup
-                
+
                 # same for player2
                 # see docs for player1
                 try:
@@ -93,20 +89,18 @@ def run_simulation(strats, rounds, blindness):
                             raise Exception("returned none")
                         player2move = bool(player2move)
                 except Exception as e:
-                    error = player2.__name__ + "\nError: " + str(e) + "\n"
-                    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-                        f.write(error) 
+                    logger.error(f"Error running function {player2.__name__}: {str(e)}")
                     bad_functions.append(player2)
                     strats.remove(player2)
                     player2_is_valid = False
                     break
-                
+
                 player1moves.append(player1move)
                 player2moves.append(player2move)
-            
+
             # do not log scores if either player is invalid
             if not player1_is_valid:
-                break                     
+                break
             if not player2_is_valid:
                 continue
 
@@ -127,10 +121,10 @@ def run_simulation(strats, rounds, blindness):
                         results['score'][0]+=POINTS_BOTH_COOPERATE
                         results['score'][1]+=POINTS_BOTH_COOPERATE
                 results['details']=[player1moves, player2moves]
-            
+
             # create datapoint for matchup
             dat[player2.__name__]=results
-        
+
         # create datapoint for player1
         data[player1.__name__]=dat
 
@@ -139,11 +133,8 @@ def run_simulation(strats, rounds, blindness):
         for bad_function in bad_functions:
             f.write(bad_function.__name__ + "\n")
 
-    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-        f.write("\n---\n***\n---\n\n")
-
     print("Simulation done.")
-    
+
     return data
 
 
@@ -154,18 +145,15 @@ def reload_blacklist(all_strats, rounds, blindness):
 
     # important!!! create copy of strats as not to modify original list and mess things up
     strats = all_strats.copy()
-    
+
     bad_functions = []
-    
-    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-        f.write("BAD CODE (RUNTIME) - BLACKLISTED\nThe following functions had errors while playing the game, and thus were blacklisted:\n\n")
-    
+
     for player1 in tqdm(strats):
-        
+
         player1_is_valid = True
 
         for player2 in strats:
-            
+
             if not player1_is_valid:
                 break
 
@@ -173,7 +161,7 @@ def reload_blacklist(all_strats, rounds, blindness):
 
             player1moves = []
             player2moves = []
-            
+
             for i in range(rounds):
                 if blindness[0] > 0:
                     if random.random()<blindness[0] and len(player1moves):
@@ -181,7 +169,7 @@ def reload_blacklist(all_strats, rounds, blindness):
                 if blindness[1] > 0:
                     if random.random()<blindness[1] and len(player2moves):
                         player2moves[-1] = not(player2moves[-1])
-                
+
                 try:
                     with suppress_stdout():
                         player1move = player1(player1moves, player2moves, i)
@@ -189,14 +177,12 @@ def reload_blacklist(all_strats, rounds, blindness):
                             raise Exception("returned none")
                         player1move = bool(player1move)
                 except Exception as e:
-                    error = player1.__name__ + "\nError: " + str(e) + "\n"
-                    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-                        f.write(error)                   
+                    logger.error(f"Error running function {player1.__name__}: {str(e)}")
                     bad_functions.append(player1)
                     strats.remove(player1)
                     player1_is_valid = False
                     break
-                
+
                 try:
                     with suppress_stdout():
                         player2move = player2(player2moves, player1moves, i)
@@ -204,14 +190,12 @@ def reload_blacklist(all_strats, rounds, blindness):
                             raise Exception("returned none")
                         player2move = bool(player2move)
                 except Exception as e:
-                    error = player2.__name__ + "\nError: " + str(e) + "\n"
-                    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-                        f.write(error) 
+                    logger.error(f"Error running function {player2.__name__}: {str(e)}")                    
                     bad_functions.append(player2)
                     strats.remove(player2)
                     player2_is_valid = False
                     break
-                
+
                 player1moves.append(player1move)
                 player2moves.append(player2move)
 
@@ -219,6 +203,3 @@ def reload_blacklist(all_strats, rounds, blindness):
     with open(BLACKLIST, "a") as f:
         for bad_function in bad_functions:
             f.write(bad_function.__name__ + "\n")
-
-    with open(PROBLEMS_LOG_LOCATION, "a") as f:
-        f.write("\n---\n***\n---\n\n")
