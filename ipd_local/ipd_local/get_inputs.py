@@ -5,10 +5,10 @@ import types
 
 from loguru import logger
 
-from game_specs import *
-from default_functions import *
-from simulation import *
-from output_locations import *
+from .game_specs import *
+from .default_functions import *
+from .simulation import *
+from .output_locations import *
 
 # gets all game inputs
 # outputs list of functions, number of rounds, and blindness level

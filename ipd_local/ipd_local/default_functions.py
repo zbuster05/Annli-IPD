@@ -4,7 +4,7 @@
 import random
 
 def rat(mymoves, othermoves, currentRound):
-    #Always Rats
+    """Always Rats"""
     return True
 
 def silent(mymoves, othermoves, currentRound):

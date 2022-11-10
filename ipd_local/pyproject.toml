@@ -13,15 +13,22 @@ gspread = "^5.6.2"
 gspread-dataframe = "^3.3.0"
 requests = "^2.28.1"
 tqdm = "^4.64.1"
+pytest = "^7.2.0"
+pytest-cov = "^4.0.0"
+mypy = "^0.990"
+interrogate = "^1.5.0"
+pytest-watch = "^4.2.0"
+pdoc = "^12.2.1"
+py-spy = "^0.3.14"
 
 [tool.poetry.dev-dependencies]
-pytest = "^5.2" # for unit testing
-pytest-cov = "^3.0.0" # for checking test coverage
-mypy = "^0.931" # for type checking
-interrogate = "^1.5.0"  # for checking doc coverage
-pytest-watch = "^4.2.0" # for auto-running tests
-pdoc = "^10.0.3" # for nice documentation
-py-spy = "^0.3.11" # for profiling
+# pytest = "^5.2" # for unit testing
+# pytest-cov = "^3.0.0" # for checking test coverage
+# mypy = "^0.931" # for type checking
+# interrogate = "^1.5.0"  # for checking doc coverage
+# pytest-watch = "^4.2.0" # for auto-running tests
+# pdoc = "^10.0.3" # for nice documentation
+# py-spy = "^0.3.11" # for profiling
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
