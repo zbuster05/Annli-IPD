@@ -58,17 +58,17 @@ def get_ranking():
         scores = []
         opponent_scores = []
         for strat2 in clean_data[strategy].keys():
-            scores.append(clean_data[strategy][strat2][0])
-            opponent_scores.append(clean_data[strategy][strat2][1])
+            scores.append(clean_data[strategy][strat2][1])
+            opponent_scores.append(clean_data[strategy][strat2][0])
         
         # calculate each metric
         total_points = np.sum(scores)
         average_points = total_points/len(scores)
-        average_margin = np.sum(np.asarray(scores)-np.asarray(opponent_scores))/len(scores)
+        # average_margin = np.sum(np.asarray(scores)-np.asarray(opponent_scores))/len(scores)
 
         strategy_stats["Total Points"] = total_points
         strategy_stats["Average Points"] = average_points
-        strategy_stats["Average Margin"] = average_margin
+        # strategy_stats["Average Margin"] = average_margin
 
         all_stats.append(strategy_stats)
     
