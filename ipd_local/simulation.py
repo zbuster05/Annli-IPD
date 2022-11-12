@@ -43,6 +43,12 @@ def run_simulation(strats, rounds, blindness):
         # play against all other players
         for player2 in strats:
 
+            # if player2.__name__ in data and player1.__name__ in data[player2.__name__]:
+            #     old_dat = data[player2.__name__][player1.__name__]
+            #     dat[player2.__name__] = [old_dat[1], old_dat[0]]
+            #     # FIXME do this for details too?        
+            #     continue # no need to run twice.
+            
             # ensure player is still valid (did not error)
             if not player1_is_valid:
                 break
@@ -51,8 +57,8 @@ def run_simulation(strats, rounds, blindness):
 
             player1moves = []
             player2moves = []
-            results={}
-            results['score']=[0, 0]
+            results=[0,0]
+            # results['score']=[0, 0]
 
             # play number of rounds specified by input parameter
             for i in range(rounds):
@@ -108,19 +114,18 @@ def run_simulation(strats, rounds, blindness):
             for i in range(rounds):
                 if player1moves[i]:
                     if player2moves[i]:
-                        results['score'][0]+=POINTS_BOTH_RAT
-                        results['score'][1]+=POINTS_BOTH_RAT
+                        results[0]+=POINTS_BOTH_RAT
+                        results[1]+=POINTS_BOTH_RAT
                     else:
-                        results['score'][0]+=POINTS_DIFFERENT_LOSER
-                        results['score'][1]+=POINTS_DIFFERENT_WINNER
+                        results[0]+=POINTS_DIFFERENT_LOSER
+                        results[1]+=POINTS_DIFFERENT_WINNER
                 else:
                     if player2moves[i]:
-                        results['score'][0]+=POINTS_DIFFERENT_WINNER
-                        results['score'][1]+=POINTS_DIFFERENT_LOSER
+                        results[0]+=POINTS_DIFFERENT_WINNER
+                        results[1]+=POINTS_DIFFERENT_LOSER
                     else:
-                        results['score'][0]+=POINTS_BOTH_COOPERATE
-                        results['score'][1]+=POINTS_BOTH_COOPERATE
-                results['details']=[player1moves, player2moves]
+                        results[0]+=POINTS_BOTH_COOPERATE
+                        results[1]+=POINTS_BOTH_COOPERATE                
 
             # create datapoint for matchup
             dat[player2.__name__]=results
@@ -136,70 +141,3 @@ def run_simulation(strats, rounds, blindness):
     print("Simulation done.")
 
     return data
-
-
-# reloads blacklisted functions by running the simulation without outputting anything
-# updates blacklist.txt for every function that errors
-# see documentation for run_simulation function
-def reload_blacklist(all_strats, rounds, blindness):
-
-    # important!!! create copy of strats as not to modify original list and mess things up
-    strats = all_strats.copy()
-
-    bad_functions = []
-
-    for player1 in tqdm(strats):
-
-        player1_is_valid = True
-
-        for player2 in strats:
-
-            if not player1_is_valid:
-                break
-
-            player2_is_valid = True
-
-            player1moves = []
-            player2moves = []
-
-            for i in range(rounds):
-                if blindness[0] > 0:
-                    if random.random()<blindness[0] and len(player1moves):
-                        player1moves[-1] = not(player1moves[-1])
-                if blindness[1] > 0:
-                    if random.random()<blindness[1] and len(player2moves):
-                        player2moves[-1] = not(player2moves[-1])
-
-                try:
-                    with suppress_stdout():
-                        player1move = player1(player1moves, player2moves, i)
-                        if player1move==None:
-                            raise Exception("returned none")
-                        player1move = bool(player1move)
-                except Exception as e:
-                    logger.error(f"Error running function {player1.__name__}: {str(e)}")
-                    bad_functions.append(player1)
-                    strats.remove(player1)
-                    player1_is_valid = False
-                    break
-
-                try:
-                    with suppress_stdout():
-                        player2move = player2(player2moves, player1moves, i)
-                        if player2move==None:
-                            raise Exception("returned none")
-                        player2move = bool(player2move)
-                except Exception as e:
-                    logger.error(f"Error running function {player2.__name__}: {str(e)}")                    
-                    bad_functions.append(player2)
-                    strats.remove(player2)
-                    player2_is_valid = False
-                    break
-
-                player1moves.append(player1move)
-                player2moves.append(player2move)
-
-    open(BLACKLIST, 'w').close()
-    with open(BLACKLIST, "a") as f:
-        for bad_function in bad_functions:
-            f.write(bad_function.__name__ + "\n")

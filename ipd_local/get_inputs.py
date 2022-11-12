@@ -111,38 +111,6 @@ def get_game_inputs():
         return loaded_functions
 
 
-    # final filter of functions that don't work properly (throw errors during actual simulation)
-    # these functions are stored in blacklist.txt
-    def filter_blacklist(all_functions):
-
-        # reloads blacklist using latest functions if user wants to reload blacklist (recommended)
-        if RELOAD_BLACKLIST:
-            print("Reloading blacklisted functions...")
-            if NOISE:
-                blindness = [NOISE_LEVEL, NOISE_LEVEL]
-            else:
-                blindness = [0,0]
-            if INCLUDE_DEFAULTS:
-                reload_blacklist(all_default_functions + all_functions, ROUNDS, blindness) # reloads blacklist. this function is defined in simulation.py because it is essentially running the simulation
-            else:
-                reload_blacklist(all_functions, ROUNDS, blindness)
-            print("Reloaded blacklisted functions.")
-
-        # removes blacklisted functions from list of functions
-        functions_dict = {}
-        for func in all_functions: # converts function list to dictionary for easier indexing
-            functions_dict[func.__name__] = func
-        blacklist = []
-        with open(BLACKLIST, "r") as f:
-            blacklist = f.readlines() # reads all functions that need to be blacklisted
-            for func in blacklist:
-                func = func[:-1]
-                del(functions_dict[func]) # removes function from list of valid functions
-        print("Removed", len(blacklist), "functions from blacklist.")
-
-        return list(functions_dict.values())
-
-
     # tests function input and outputs
     # input must be three arguments: your past moves, opponent's past moves, and round number
     def test_io_functions(functions):
@@ -165,17 +133,9 @@ def get_game_inputs():
         
         return good_functions, bad_functions
 
-
-    # returns list of function objects that will be participating in tournament
-    def get_functions():
-        all_functions = load_functions() # load all functions that compile and pass input/output
-        good_functions = filter_blacklist(all_functions) # filter away blacklisted functions
-        return good_functions
-
-
     # config for running game
     # returns list of functions (strats), number of rounds, and blindness
-    strats = get_functions()
+    strats = load_functions()
     if INCLUDE_DEFAULTS: # include default functions if user desires
         strats = all_default_functions + strats
     rounds = ROUNDS

@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-import json
+import orjson
 import copy
 import gspread
 import gspread_dataframe
@@ -17,21 +17,21 @@ def get_clean_data():
     # read data from json where raw output is logged
     raw_data = {}
     with open(RAW_OUT_LOCATION, 'r') as fp:
-        raw_data = json.load(fp)
+        raw_data = orjson.loads(fp.read())
     
     # create copy of this data that excludes the exact scores per round
-    clean_data = copy.deepcopy(raw_data)
-    for k in list(clean_data.keys()):
-        for j in list(clean_data[k].keys()):
-          if (type(clean_data[k][j])== dict):
-            for key in list(clean_data[k][j].keys()):
-                if key == "details":
-                    del clean_data[k][j][key]
-    for k in list(clean_data.keys()):
-        for j in list(clean_data[k].keys()):
-          if (type(clean_data[k][j])== dict):
-            clean_data[k][j] = list(clean_data[k][j].values())[0]
-    return clean_data
+    # clean_data = copy.deepcopy(raw_data)
+    # for k in list(clean_data.keys()):
+    #     for j in list(clean_data[k].keys()):
+    #       if (type(clean_data[k][j])== dict):
+    #         for key in list(clean_data[k][j].keys()):
+    #             if key == "details":
+    #                 del clean_data[k][j][key]
+    # for k in list(clean_data.keys()):
+    #     for j in list(clean_data[k].keys()):
+    #       if (type(clean_data[k][j])== dict):
+    #         clean_data[k][j] = list(clean_data[k][j].values())[0]
+    return raw_data
 
 
 # returns pairwise scores for all functions as a pandas dataframe.
@@ -81,7 +81,7 @@ def get_ranking():
 def get_summary():
     specs = {}
     with open(SPECS_JSON_LOCATION, 'r') as fp:
-        specs = json.load(fp)
+        specs = orjson.loads(fp.read())
     summary = pd.DataFrame.from_dict(specs, orient="index")
     return summary
 

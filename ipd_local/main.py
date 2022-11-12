@@ -1,7 +1,7 @@
 # main!!
 # run this file to run the actual simulation
 
-import json
+import orjson
 
 from game_specs import *
 from default_functions import *
@@ -12,6 +12,7 @@ from output_locations import *
 
 from loguru import logger
 import sys
+import time
 
 # EVERYTHING
 # fetches latest data, runs simulation, updates sheets of results
@@ -24,9 +25,15 @@ def run_full_game():
     strats, rounds, blindness = get_game_inputs() # fetches game inputs. function defined in get_inputs.py
     
     raw_data = run_simulation(strats, rounds, blindness) # runs simulation. function defined in simulation.py
-    with open(RAW_OUT_LOCATION, 'w') as fp:
-        json.dump(raw_data, fp) # dumps raw data of simulation to output location
-
+    print(type(raw_data))
+    print(len(raw_data))
+    print(raw_data["EllieLinPavlov"])
+    print("Dumping data...")
+    old = time.time()
+    with open(RAW_OUT_LOCATION, 'wb') as fp:
+        fp.write(orjson.dumps(raw_data)) # dumps raw data of simulation to output location
+    print(f"Finished dumping data in {time.time()-old}s")
+        
     # dumps game specs to output location
     specs = {
         "Noise": NOISE,
@@ -37,8 +44,8 @@ def run_full_game():
         "Points for loser when different": POINTS_DIFFERENT_LOSER,
         "Points when both cooperate": POINTS_BOTH_COOPERATE
     }    
-    with open('./latest_specs.json', 'w') as fp:
-        json.dump(specs, fp)
+    with open('./latest_specs.json', 'wb') as fp:
+        fp.write(orjson.dumps(specs, fp))
 
     update_sheet() # updates spreadsheet
     
