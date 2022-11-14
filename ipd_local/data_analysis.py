@@ -13,25 +13,25 @@ from output_locations import *
 # the first value in the pair is the function of the outer dictionary key, while the second is the inner one.
 # for example, clean_data["f1"]["f2"] = [0,10] means f1 scored 0 and f2 scored 10.
 def get_clean_data():
-    
+
     # read data from json where raw output is logged
     raw_data = {}
     with open(RAW_OUT_LOCATION, 'r') as fp:
-        raw_data = json.load(fp)
-    
+        raw_data = json.loads(fp.read())
+
     # create copy of this data that excludes the exact scores per round
-    clean_data = copy.deepcopy(raw_data)
-    for k in list(clean_data.keys()):
-        for j in list(clean_data[k].keys()):
-          if (type(clean_data[k][j])== dict):
-            for key in list(clean_data[k][j].keys()):
-                if key == "details":
-                    del clean_data[k][j][key]
-    for k in list(clean_data.keys()):
-        for j in list(clean_data[k].keys()):
-          if (type(clean_data[k][j])== dict):
-            clean_data[k][j] = list(clean_data[k][j].values())[0]
-    return clean_data
+    # clean_data = copy.deepcopy(raw_data)
+    # for k in list(clean_data.keys()):
+    #     for j in list(clean_data[k].keys()):
+    #       if (type(clean_data[k][j])== dict):
+    #         for key in list(clean_data[k][j].keys()):
+    #             if key == "details":
+    #                 del clean_data[k][j][key]
+    # for k in list(clean_data.keys()):
+    #     for j in list(clean_data[k].keys()):
+    #       if (type(clean_data[k][j])== dict):
+    #         clean_data[k][j] = list(clean_data[k][j].values())[0]
+    return raw_data
 
 
 # returns pairwise scores for all functions as a pandas dataframe.
@@ -45,7 +45,7 @@ def get_pairwise():
 # returns functions ranked by total score as pandas dataframe
 # also lists each function's average score and average margin (how much higher do they score compared to opponent)
 def get_ranking():
-    
+
     clean_data = get_clean_data()
     all_stats = []
 
@@ -53,14 +53,14 @@ def get_ranking():
     for strategy in clean_data.keys():
         strategy_stats = {}
         strategy_stats["Strategy"] = strategy
-        
+
         # retrive scores
         scores = []
         opponent_scores = []
         for strat2 in clean_data[strategy].keys():
             scores.append(clean_data[strategy][strat2][1])
             opponent_scores.append(clean_data[strategy][strat2][0])
-        
+
         # calculate each metric
         total_points = np.sum(scores)
         average_points = total_points/len(scores)
@@ -71,7 +71,7 @@ def get_ranking():
         # strategy_stats["Average Margin"] = average_margin
 
         all_stats.append(strategy_stats)
-    
+
     ranked = sorted(all_stats, key=lambda d: d['Total Points'], reverse=True) # sorts functions by total score
     ranking = pd.DataFrame.from_dict(ranked)
     return ranking
@@ -81,16 +81,16 @@ def get_ranking():
 def get_summary():
     specs = {}
     with open(SPECS_JSON_LOCATION, 'r') as fp:
-        specs = json.load(fp)
+        specs = json.loads(fp.read())
     summary = pd.DataFrame.from_dict(specs, orient="index")
     return summary
 
 # retrieves all statistics (pairwise, ranking, and summary) and updates them on google spreadsheet.
 # this spreadsheet can be found here: https://docs.google.com/spreadsheets/d/138rZ0hdy4MfFmvb1wZqgmeckGUpNl0N0T4wpAPXWeZE/edit?usp=sharing
 def update_sheet():
-    
+
     print("Updating results spreadsheet...")
-    
+
     # accesses correct google spreadsheet for results
     service_account = gspread.service_account(filename="service_account.json")
     spreadsheet = service_account.open("IPD LATEST RUN Results")
@@ -108,17 +108,13 @@ def update_sheet():
     # updates pairwise scores
     pairwise_sheet = spreadsheet.worksheet("Pairwise Scores")
     pairwise_sheet.clear()
-    
+
     # reverse order of score reporting
     clean_data = get_pairwise()
     for k in list(clean_data.keys()):
         for j in list(clean_data[k].keys()):
-            # reverse first and second element
-            rev = []
-            rev.append(clean_data[k][j][1])
-            rev.append(clean_data[k][j][0])
-            clean_data[k][j] = rev
-    
+            clean_data[k][j] = list(reversed(clean_data[k][j]))
+
     gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=clean_data,include_index=True,include_column_header=True,resize=True)
-    
+
     print("Updated results spreadsheet.")
