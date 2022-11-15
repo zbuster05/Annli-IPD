@@ -5,7 +5,7 @@ import copy
 import gspread
 import gspread_dataframe
 
-from output_locations import *
+from .output_locations import *
 
 # returns pairwise scores for all functions as a pandas dataframe.
 # column is first function, row is second function.
