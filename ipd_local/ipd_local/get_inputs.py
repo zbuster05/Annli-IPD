@@ -6,14 +6,14 @@ from typing import Optional, List, Callable, NewType, Tuple
 
 from loguru import logger
 
-from game_specs import *
-from default_functions import *
-from simulation import *
-from output_locations import *
+from .game_specs import *
+from .default_functions import *
+from .simulation import *
+from .output_locations import *
 import os
 import urllib
 
-Strategy = NewType("Strategy", Callable[[List[bool], List[bool], int]])
+Strategy = NewType("Strategy", Callable[[List[bool], List[bool]], int])
 
 def get_spreadsheet_data(sheet: str, tab: str) -> List[List[str]]:
     """

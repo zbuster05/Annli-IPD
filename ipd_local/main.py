@@ -4,12 +4,12 @@
 import json
 
 import ipd_local
-# from ipd_local.game_specs import *
-# from ipd_local.default_functions import *
-# from ipd_local.data_analysis import *
-# from ipd_local.simulation import *
-# from ipd_local.get_inputs import *
-# from ipd_local.output_locations import *
+from ipd_local.game_specs import *
+from ipd_local.default_functions import *
+from ipd_local.simulation import *
+from ipd_local.get_inputs import *
+from ipd_local.output_locations import *
+from ipd_local.data_analysis import *
 
 from loguru import logger
 import sys
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     logger.add(PROBLEMS_LOG_LOCATION)
     logger.info("Starting!")    
     
-    data = get_spreadsheet_data()
+    data = get_spreadsheet_data(SHEET_NAME, TAB_NAME)
     strats = get_and_load_functions(data)
     if INCLUDE_DEFAULTS:
         strats = all_default_functions + strats

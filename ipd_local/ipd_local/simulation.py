@@ -1,8 +1,8 @@
 import random
 from tqdm import tqdm
 
-from game_specs import *
-from output_locations import *
+from .game_specs import *
+from .output_locations import *
 import types
 from loguru import logger
 
