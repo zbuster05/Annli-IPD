@@ -3,12 +3,13 @@
 
 import json
 
-from game_specs import *
-from default_functions import *
-from data_analysis import *
-from simulation import *
-from get_inputs import *
-from output_locations import *
+import ipd_local
+# from ipd_local.game_specs import *
+# from ipd_local.default_functions import *
+# from ipd_local.data_analysis import *
+# from ipd_local.simulation import *
+# from ipd_local.get_inputs import *
+# from ipd_local.output_locations import *
 
 from loguru import logger
 import sys
@@ -33,7 +34,8 @@ if __name__ == "__main__":
         blindness = [NOISE_LEVEL, NOISE_LEVEL]
     else:
         blindness = [0,0]
-    
+
+    exit(0)
     raw_data = run_simulation_parallel(strats)
     
     with open(RAW_OUT_LOCATION, 'w') as fp:
