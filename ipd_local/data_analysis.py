@@ -7,37 +7,11 @@ import gspread_dataframe
 
 from output_locations import *
 
-
-# gets clean set of data from json of raw simulation output
-# outputs dictionary of dictionaries, where each key (for both dimensions) is a strategy. the values of the nested dictionaries are pairs of scores for the two functions, in a list.
-# the first value in the pair is the function of the outer dictionary key, while the second is the inner one.
-# for example, clean_data["f1"]["f2"] = [0,10] means f1 scored 0 and f2 scored 10.
-def get_clean_data():
-
-    # read data from json where raw output is logged
-    raw_data = {}
-    with open(RAW_OUT_LOCATION, 'r') as fp:
-        raw_data = json.loads(fp.read())
-
-    # create copy of this data that excludes the exact scores per round
-    # clean_data = copy.deepcopy(raw_data)
-    # for k in list(clean_data.keys()):
-    #     for j in list(clean_data[k].keys()):
-    #       if (type(clean_data[k][j])== dict):
-    #         for key in list(clean_data[k][j].keys()):
-    #             if key == "details":
-    #                 del clean_data[k][j][key]
-    # for k in list(clean_data.keys()):
-    #     for j in list(clean_data[k].keys()):
-    #       if (type(clean_data[k][j])== dict):
-    #         clean_data[k][j] = list(clean_data[k][j].values())[0]
-    return raw_data
-
-
 # returns pairwise scores for all functions as a pandas dataframe.
 # column is first function, row is second function.
 def get_pairwise():
-    clean_data = get_clean_data()
+    with open(RAW_OUT_LOCATION, 'r') as fp:
+        clean_data = json.loads(fp.read())
     pairwise = pd.DataFrame.from_dict(clean_data)
     return pairwise
 
@@ -45,8 +19,8 @@ def get_pairwise():
 # returns functions ranked by total score as pandas dataframe
 # also lists each function's average score and average margin (how much higher do they score compared to opponent)
 def get_ranking():
-
-    clean_data = get_clean_data()
+    with open(RAW_OUT_LOCATION, 'r') as fp:
+        clean_data = json.loads(fp.read())
     all_stats = []
 
     # calculates statistics for each function
