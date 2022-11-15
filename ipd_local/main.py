@@ -35,7 +35,6 @@ if __name__ == "__main__":
     else:
         blindness = [0,0]
 
-    exit(0)
     raw_data = run_simulation_parallel(strats)
     
     with open(RAW_OUT_LOCATION, 'w') as fp:
