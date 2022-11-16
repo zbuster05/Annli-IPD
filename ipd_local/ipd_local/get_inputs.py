@@ -14,7 +14,7 @@ from .output_locations import *
 import os
 import urllib
 
-Strategy = NewType("Strategy", Callable[[List[bool], List[bool]], int])
+Strategy = NewType("Strategy", Callable[[List[bool], List[bool], int], bool])
 
 def get_spreadsheet_data(sheet: str, tab: str) -> List[List[str]]:
     """

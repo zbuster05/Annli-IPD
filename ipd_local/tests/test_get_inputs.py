@@ -81,5 +81,29 @@ def test_get_and_load_functions():
     assert len(functions) == 4
     assert [callable(f) for f in functions] == [True]*4
 
-def inputs_subsystem():
-    pass # TODO
+def test_inputs_subsystem():
+    contents = [
+        ['', "Student", "Regular", "Noise" ],
+        ['', "Quackary", "https://pastebin.com/gue8xdjr", "https://pastebin.com/EevQk4ph" ],
+        ['', "huxely. ", "https://pastebin.com/bjthjeT6", "https://pastebin.com/bjthjeT6" ],
+        ['', "Jackary!", "https://pastebin.com/0fqA2Wtd", "https://pastebin.com/0fqA2Wtd" ],        
+    ]
+    set_temp_sheet(
+        "Test input subsystem",
+        pd.DataFrame(contents[1:], columns=contents[0]),
+        tab_name="Form Responses"
+    )
+    fetched = get_spreadsheet_data("Test input subsystem", "Form Responses")
+
+    print(fetched)
+    print(contents)
+    assert fetched == contents
+    
+    functions = get_and_load_functions(fetched, noise=False)
+    assert len(functions) == 5
+    assert [callable(f) for f in functions] == [True]*5
+    assert (
+        [f.__name__ for f in functions]
+        ==
+        ["rat", "titFortat", "titForTwotats", "nukeFortat", "nukeForTwotats"]
+    )
