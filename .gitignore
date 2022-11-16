@@ -1,9 +1,9 @@
-/.DS_Store
-/service_account.json
-/*.json # redundant, but the API key should really be its own line anyway just in case
+.DS_Store
+service_account.json
+*.json # redundant, but the API key should really be its own line anyway just in case
 /problems.txt
 
 /__pycache__/
-/poetry.lock
+poetry.lock
 
 *.svg # for profile outputs
