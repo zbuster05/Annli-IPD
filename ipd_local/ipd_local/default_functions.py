@@ -3,7 +3,7 @@
 
 import random
 
-def rat(mymoves, othermoves, currentRound) -> bool:
+def rat(mymoves: [bool], othermoves: [bool], currentRound: int) -> bool:
     # Always Rats (returns true)
     assert len(mymoves) == currentRound
     assert len(othermoves) == currentRound

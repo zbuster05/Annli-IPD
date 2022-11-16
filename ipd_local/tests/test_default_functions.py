@@ -10,7 +10,7 @@ import pandas as pd
 from . import *
 
 
-def test_rat():
+def test_rat() -> None:
     """
     Verifies all inputs of different edge cases return True.
     """
@@ -21,7 +21,7 @@ def test_rat():
     assert rat([True, False, True, False], [True, True, True, True], 4)  == True # tests nontrivial number of rounds
 
 
-def test_silent():
+def test_silent() -> None:
     """
     Verifies all inputs of different edge cases return false.
     """
@@ -30,3 +30,18 @@ def test_silent():
         silent([True], [True], sys.maxsize) == False # tests function behaviour if round number and number of moves do not line up
     assert silent([True], [True], 1) == False # tests normal round
     assert silent([True, False, True, False], [True, True, True, True], 4) == False # tests nontrivial number of rounds
+
+def test_rand() -> None:
+    """
+    Verifies random works to expected distribution and also returns bool on edge cases
+    """
+    assert round([rand([True * x], [False * x], x) for x in range(1000)].count(True)/1000, 1) == 0.5 # tests if matches distribution up to length/round 1000, also tests 0th edge case
+
+def test_kindaRandom() -> None:
+    assert round([kindaRandom([True * x], [False * x], x) for x in range(1000)].count(True)/1000, 1) == 0.9 # tests if matches distribution up to length/round 1000, also tests 0th edge case
+
+def test_titFortat() -> None:
+    assert titFortat([], [], 0) == False # tests 0th case
+    assert titFortat([False], [True], 1) == True # tests basic case
+
+
