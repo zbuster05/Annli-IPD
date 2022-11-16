@@ -5,6 +5,9 @@ import random
 
 def rat(mymoves, othermoves, currentRound) -> bool:
     # Always Rats (returns true)
+    assert len(mymoves) == currentRound
+    assert len(othermoves) == currentRound
+
     return True
 
 def silent(mymoves, othermoves, currentRound) -> bool:
