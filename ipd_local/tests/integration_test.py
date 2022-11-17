@@ -17,8 +17,7 @@ import pandas as pd
 from . import *
 
 
-
-def test_full_game():
+def test_full_game() -> None:
     sheet = pd.DataFrame([
     ["", "Quackary", "https://pastebin.com/gue8xdjr", "https://pastebin.com/fWAFkbPD" ],
     ["", "huxely. ", "https://pastebin.com/bjthjeT6", "https://pastebin.com/bjthjeT6" ],

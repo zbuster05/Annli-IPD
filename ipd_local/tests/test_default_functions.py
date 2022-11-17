@@ -47,4 +47,3 @@ def test_titFortat() -> None:
 
 def test_titForTwotats() -> None:
     pass
-
