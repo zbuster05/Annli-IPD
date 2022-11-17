@@ -1,3 +1,5 @@
+"""Specify global parameters in this submodule."""
+
 # simulation specs
 NOISE = True # whether or not this tournament has noise
 NOISE_LEVEL = 0.1 # percentage noise; only used if NOISE is set to True

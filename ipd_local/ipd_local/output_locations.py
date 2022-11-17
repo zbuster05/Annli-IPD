@@ -1,4 +1,4 @@
-# this file defines the locations of output files for the simulation
+"""This submodule defines the locations of output files for the simulation."""
 
 # json file of the raw output of the simulation (scores and results of every single round)
 # this is updated every time the simulation is run, so it only stores results of the latest game
