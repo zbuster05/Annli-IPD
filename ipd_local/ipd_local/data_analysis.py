@@ -61,7 +61,7 @@ def get_summary():
 
 # retrieves all statistics (pairwise, ranking, and summary) and updates them on google spreadsheet.
 # this spreadsheet can be found here: https://docs.google.com/spreadsheets/d/138rZ0hdy4MfFmvb1wZqgmeckGUpNl0N0T4wpAPXWeZE/edit?usp=sharing
-def update_sheet():
+def update_sheet() -> None:
 
     print("Updating results spreadsheet...")
 
@@ -85,10 +85,6 @@ def update_sheet():
 
     # reverse order of score reporting
     clean_data = get_pairwise()
-    for k in list(clean_data.keys()):
-        for j in list(clean_data[k].keys()):
-            clean_data[k][j] = list(reversed(clean_data[k][j]))
-
     gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=clean_data,include_index=True,include_column_header=True,resize=True)
 
     print("Updated results spreadsheet.")
