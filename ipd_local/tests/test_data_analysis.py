@@ -8,6 +8,8 @@ from math import nan
 import os
 import random
 import sys
+import gspread
+import gspread_dataframe
 
 import pandas as pd
 from . import *
@@ -21,5 +23,8 @@ def test_get_ranking() -> None:
 def test_get_summary() -> None:
     assert get_summary().to_dict() == {0: {'Noise': True, 'Noise Level (if applicable)': 0.1, 'Noise Games Played Before Averaging (if applicable)': 50, 'Number of Rounds': 59, 'Points when both rat': 1, 'Points for winner when different': 9, 'Points for loser when different': 0, 'Points when both cooperate': 5, 'Debug mode (fixed random seed - should be off)': True}}
 
-def test_update_sheet() -> None:
-    update_sheet()
+def test_update_sheet() -> None: 
+    update_sheet("TEST RUN Results")
+  
+    
+    

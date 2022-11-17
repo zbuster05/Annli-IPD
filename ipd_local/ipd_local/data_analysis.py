@@ -61,28 +61,41 @@ def get_summary():
 
 # retrieves all statistics (pairwise, ranking, and summary) and updates them on google spreadsheet.
 # this spreadsheet can be found here: https://docs.google.com/spreadsheets/d/138rZ0hdy4MfFmvb1wZqgmeckGUpNl0N0T4wpAPXWeZE/edit?usp=sharing
-def update_sheet() -> None:
+def update_sheet(spreadsheet_name: str = "IPD LATEST RUN Results") -> None:
 
     print("Updating results spreadsheet...")
 
     # accesses correct google spreadsheet for results
     service_account = gspread.service_account(filename="service_account.json")
-    spreadsheet = service_account.open("IPD LATEST RUN Results")
+    try: 
+        spreadsheet = service_account.open(spreadsheet_name)
+    except gspread.SpreadsheetNotFound:
+        spreadsheet = service_account.create(spreadsheet_name)
 
     # updates summary
-    summary_sheet = spreadsheet.worksheet("Summary Statistics")
+    try:
+        summary_sheet = spreadsheet.worksheet("Summary Statistics")
+    except gspread.WorksheetNotFound:
+        summary_sheet = spreadsheet.add_worksheet("Summary Statistics", rows="100", cols="20")
     summary_sheet.clear()
     gspread_dataframe.set_with_dataframe(worksheet=summary_sheet,dataframe=get_summary(),include_index=True,include_column_header=False,resize=True)
 
     # updates ranking
-    ranking_sheet = spreadsheet.worksheet("Ranking")
+    try:
+        ranking_sheet = spreadsheet.worksheet("Ranking")
+    except gspread.WorksheetNotFound:
+        ranking_sheet = spreadsheet.add_worksheet("Ranking", rows="100", cols="20")
+
     ranking_sheet.clear()
     gspread_dataframe.set_with_dataframe(worksheet=ranking_sheet,dataframe=get_ranking(),include_index=False,include_column_header=True,resize=True)
 
     # updates pairwise scores
-    pairwise_sheet = spreadsheet.worksheet("Pairwise Scores")
-    pairwise_sheet.clear()
+    try:
+        pairwise_sheet = spreadsheet.worksheet("Pairwise Scores")
+    except gspread.WorksheetNotFound:
+        pairwise_sheet = spreadsheet.add_worksheet("Pairwise Scores", rows="100", cols="20")
 
+    pairwise_sheet.clear()
     # reverse order of score reporting
     clean_data = get_pairwise()
     gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=clean_data,include_index=True,include_column_header=True,resize=True)
