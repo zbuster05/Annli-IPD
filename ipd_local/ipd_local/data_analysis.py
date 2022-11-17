@@ -61,7 +61,7 @@ def get_summary():
 
 # retrieves all statistics (pairwise, ranking, and summary) and updates them on google spreadsheet.
 # this spreadsheet can be found here: https://docs.google.com/spreadsheets/d/138rZ0hdy4MfFmvb1wZqgmeckGUpNl0N0T4wpAPXWeZE/edit?usp=sharing
-def update_sheet(spreadsheet_name: str = "IPD LATEST RUN Results") -> None:
+def update_sheet(spreadsheet_name: str="IPD LATEST RUN Results") -> None:
 
     print("Updating results spreadsheet...")
 

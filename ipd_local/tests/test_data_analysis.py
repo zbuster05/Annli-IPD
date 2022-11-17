@@ -1,6 +1,7 @@
 from ipd_local.data_analysis import *
 from ipd_local.default_functions import *
 from ipd_local.output_locations import *
+from ipd_local.get_inputs import *
 from ipd_local.simulation import run_simulation
 import pytest
 
@@ -24,7 +25,9 @@ def test_get_summary() -> None:
     assert get_summary().to_dict() == {0: {'Noise': True, 'Noise Level (if applicable)': 0.1, 'Noise Games Played Before Averaging (if applicable)': 50, 'Number of Rounds': 59, 'Points when both rat': 1, 'Points for winner when different': 9, 'Points for loser when different': 0, 'Points when both cooperate': 5, 'Debug mode (fixed random seed - should be off)': True}}
 
 def test_update_sheet() -> None: 
-    update_sheet("TEST RUN Results")
-  
+    update_sheet("TEST RUN Results")    
+    assert get_spreadsheet_data("TEST RUN Results", "Summary Statistics") == [['Noise', 'TRUE'], ['Noise Level (if applicable)', '0.1'], ['Noise Games Played Before Averaging (if applicable)', '50'], ['Number of Rounds', '59'], ['Points when both rat', '1'], ['Points for winner when different', '9'], ['Points for loser when different', '0'], ['Points when both cooperate', '5'], ['Debug mode (fixed random seed - should be off)', 'TRUE']]
     
+    assert get_spreadsheet_data("TEST RUN Results", "Ranking") == [['Strategy', 'Total Points', 'Average Points'], ['silent', '849.36', '424.68'], ['titFortat', '379.68', '189.84'], ['rat', '52.14', '26.07']]
     
+    assert get_spreadsheet_data("TEST RUN Results", "Pairwise Scores") == [['', 'rat', 'silent', 'titFortat'], ['silent', '[531.0, 0.0]', '', '[318.36, 265.8]'], ['titFortat', '[113.88, 52.14]', '[265.8, 318.36]', ''], ['rat', '', '[0.0, 531.0]', '[52.14, 113.88]']]
