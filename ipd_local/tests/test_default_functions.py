@@ -43,5 +43,8 @@ def test_kindaRandom() -> None:
 def test_titFortat() -> None:
     assert titFortat([], [], 0) == False # tests 0th case
     assert titFortat([False], [True], 1) == True # tests basic case
+    assert titFortat([False*100], [False * 99, True], 100) == True # tests more complicated case
 
+def test_titForTwotats() -> None:
+    pass
 
