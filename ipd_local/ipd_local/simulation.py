@@ -1,7 +1,7 @@
 import random
 from tqdm import tqdm
 
-from typing import List, Callable, Any
+from typing import List, Callable, Any, Tuple, NewType, Dict
 
 from .game_specs import *
 from .output_locations import *
@@ -13,6 +13,7 @@ import sys, os
 
 import multiprocessing
 import marshal
+import itertools
 from collections import defaultdict
 
 @contextmanager
@@ -26,7 +27,7 @@ def suppress_stdout():
     with suppress_stdout():
         # code to suppress
         strategy() # will not print anything even if it has print statements
-    print("Back to normal!")    
+    print("Back to normal!")
     ```
     """
     with open(os.devnull, "w") as devnull:
@@ -42,7 +43,7 @@ def pack_functions(functions: Tuple[Callable[..., Any]]) -> Tuple[str]:
     """Packs a tuple of two functions into a tuple of two strings of their bytecode.
     Note:
     - If the function references globals, it will not work!
-    - This loses the function name information.    
+    - This loses the function name information.
     """
     return (marshal.dumps(functions[0].__code__), marshal.dumps(functions[1].__code__))
 
@@ -57,69 +58,99 @@ def unpack_functions(bytecodes: Tuple[str]) -> Tuple[Callable[..., Any]]:
     )
 
 
-def get_scores(player1_moves: List[bool], player2_moves: List[bool]) -> List[int]:
+def get_scores(
+    player1_moves: List[bool],
+    player2_moves: List[bool],
+    both_rat: int = POINTS_BOTH_RAT,
+    both_coop: int = POINTS_BOTH_COOPERATE,
+    loser: int = POINTS_DIFFERENT_LOSER,
+    winner: int = POINTS_DIFFERENT_WINNER
+) -> List[int]:
     """
-    TODO
-    NOTE This should really return a tuple instead of a list.
+    Calculates the points each player has given their set of moves.
+
+    Note: `player1_moves` and `player2_moves` are assumed to be equal length!
+
+    Arguments:
+    - `player1_moves`: the list of moves player 1 made
+    - `player2_moves`: the list of moves player 2 made
+    - `both_rat`: the points received if both players rat.
+    - `both_coop`: the points received if both players cooperate.
+    - `loser`: the points received by the cooperating player if the other one rats
+    - `winner`: the points received by the rat player if the other one cooperates
+
+    `both_rat`, `both_coop`, `loser`, and `winner` all default to the values set in `game_specs.py`
+
+    Returns: a 2-element list of the points of player 1 and player 2.
     """
+    # NOTE This should really return a tuple instead of a list.
     results = [0,0]
-    for i in len(player1_moves):            
-        if player1moves[i]:
-            if player2moves[i]:
-                results[0]+=POINTS_BOTH_RAT
-                results[1]+=POINTS_BOTH_RAT
+    for i in range(len(player1_moves)):
+        if player1_moves[i]:
+            if player2_moves[i]:
+                results[0]+=both_rat
+                results[1]+=both_rat
             else:
-                results[0]+=POINTS_DIFFERENT_LOSER
-                results[1]+=POINTS_DIFFERENT_WINNER
+                results[0]+=winner
+                results[1]+=loser
         else:
-            if player2moves[i]:
-                results[0]+=POINTS_DIFFERENT_WINNER
-                results[1]+=POINTS_DIFFERENT_LOSER
+            if player2_moves[i]:
+                results[0]+=loser
+                results[1]+=winner
             else:
-                results[0]+=POINTS_BOTH_COOPERATE
-                results[1]+=POINTS_BOTH_COOPERATE
-                games.append(results)    
+                results[0]+=both_coop
+                results[1]+=both_coop
     return results
 
-    
-def play_match(code_strs: Tuple[str]):
-    player1, player2 = unpack_functions(code_strs)        
-    # legacy TODO remove
-    blindness = [NOISE_LEVEL, NOISE_LEVEL]
-    rounds = ROUNDS
-    
+
+def play_match(
+    code_strs: Tuple[str],
+    noise: bool = NOISE,
+    rounds: int = ROUNDS,
+    num_games: int = NOISE_GAMES_TILL_AVG
+) -> List[int]:
+    """
+    Plays a match of Iterated Prisoner's Dilemma between two players.
+
+    Arguments:
+    - `code_strs`: a tuple of the bytecode representations of the two players.
+    - `noise`: whether or not noise is enabled.
+    - `rounds`: the number of rounds for the game.
+    - `num_games`: the number of games to play before averaging results if noise is on.
+
+    `noise`, `rounds`, and `num_games` all default to the values specified in `game_specs.py`
+
+    Returns: a 2-element list of their scores.
+    """
+    player1, player2 = unpack_functions(code_strs)
     games = []
-    for _g in range(NOISE_GAMES_TILL_AVG if NOISE else 1): 
+    for _g in range(num_games if noise else 1):
         player1moves = []
         player2moves = []
-        results=[0,0]
-
 
         for i in range(rounds):
-            # incorporate noise, if applicable
-            # this code can be optimized but since i just took it from someone else i'm just leaving it like this for now
-            if blindness[0] > 0:
-                if random.random()<blindness[0] and len(player1moves):
-                    player1moves[-1] = not(player1moves[-1])
-            if blindness[1] > 0:
-                if random.random()<blindness[1] and len(player2moves):
-                    player2moves[-1] = not(player2moves[-1])
+            # handle perceived moves (for noise)
+            p1_moves = player1moves.copy()
+            p2_moves = player2moves.copy()
+            if noise:
+                if random.random()<NOISE_LEVEL and len(player1moves) > 0:
+                    p1_moves[-1] = not(player1moves[-1])
+                if random.random()<NOISE_LEVEL and len(player2moves) > 0:
+                    p2_moves[-1] = not(player2moves[-1])
 
             try:
                 with suppress_stdout():
-                    player1move = player1(player1moves, player2moves, i)
-                    if player1move==None:
-                        raise Exception("returned none") # handle None separately because it is cast to False with the bool() function, which is not desired
-                    player1move = bool(player1move) # casting allows player to output binary int instead of bool, if desired
-            except Exception as e:            
+                    player1move = player1(p1_moves, p2_moves, i)
+                    if not isinstance(player1move, bool):
+                        raise Exception("Strategy returned invalid response!")
+            except Exception as e:
                 return None
 
             try:
                 with suppress_stdout():
-                    player2move = player2(player2moves, player1moves, i)
-                    if player2move==None:
-                        raise Exception("returned none")
-                    player2move = bool(player2move)
+                    player2move = player2(p2_moves, p1_moves, i)
+                    if not isinstance(player2move, bool):
+                        raise Exception("Strategy returned invalid response!")                    
             except Exception as e:
                 return None
 
@@ -128,27 +159,41 @@ def play_match(code_strs: Tuple[str]):
 
         if len(player1moves) != rounds or len(player2moves) != rounds:
             return None
-        
-        games.append(get_scores(player1_moves, player2_moves))    
+
+        games.append(get_scores(player1moves, player2moves))
 
     return [
-        sum([g[0] for g in games])/(NOISE_GAMES_TILL_AVG if NOISE else 1),
-        sum([g[1] for g in games])/(NOISE_GAMES_TILL_AVG if NOISE else 1),
+        sum([g[0] for g in games])/(num_games if noise else 1),
+        sum([g[1] for g in games])/(num_games if noise else 1),
     ]
 
+Strategy = NewType("Strategy", Callable[[List[bool], List[bool], int], bool]) # FIXME redundant def
 
-def run_simulation_parallel(strats, rounds, blindness):
+def run_simulation(strats: List[Strategy], noise: bool = NOISE) -> Dict[str, Dict[str, List[int]]]:
+    """
+    Runs the full IPD simulation.
+
+    Takes a list  `strats` of strategies to be run.
+    Optionally, whether noise is on is specified with the `noise` argument. Defaults to value in `game_specs.py`
+    )
+    Returns a nested dictionary that maps matchups to results.
+    Example:
+    ```
+    out = run_simulation([SteveFunc, QuackaryFunc, JackaryFunc])
+    print(out["SteveFunc"]["QuackaryFunc"]) # gives results of Steve vs. Quackary
+    ```
+    """
     matchups = []
     print(len(strats))
     for i,p1 in enumerate(strats):
         for j,p2 in enumerate(strats):
             if j <= i:
                 continue
-            matchups.append((p1, p2))    
-    with multiprocessing.Pool(16) as p:        
-        res = list(tqdm(p.imap(
+            matchups.append((p1, p2))
+    with multiprocessing.Pool(16) as p:
+        res = list(tqdm(p.imap( # NOTE imap() may be the source of the slowness...?
             play_match,
-            [pack_functions(x) for x in matchups],            
+            [pack_functions(x) for x in matchups],
         ), total=len(matchups)))
     output = defaultdict(dict)
     for i,x in enumerate(matchups):
