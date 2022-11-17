@@ -1,7 +1,9 @@
+"""Submodule that actually simulates the IPD game."""
+
 import random
 from tqdm import tqdm
 
-from typing import List, Callable, Any, Tuple, NewType, Dict
+from typing import List, Callable, Any, Tuple, NewType, Dict, Optional
 
 from .game_specs import *
 from .output_locations import *
@@ -22,7 +24,7 @@ def suppress_stdout():
     Suppresses any writes to stdout.
 
     Example:
-    ```
+    ```py
     print("Suppressing!")
     with suppress_stdout():
         # code to suppress
@@ -39,8 +41,8 @@ def suppress_stdout():
             sys.stdout = old_stdout
 
 
-def pack_functions(functions: Tuple[Callable[..., Any]]) -> Tuple[str]:
-    """Packs a tuple of two functions into a tuple of two strings of their bytecode.
+def pack_functions(functions: Tuple[Callable[..., Any], Callable[..., Any]]) -> Tuple[bytes, bytes]:
+    """Packs a tuple of two functions into a tuple of their bytecode.
     Note:
     - If the function references globals, it will not work!
     - This loses the function name information.
@@ -48,8 +50,8 @@ def pack_functions(functions: Tuple[Callable[..., Any]]) -> Tuple[str]:
     return (marshal.dumps(functions[0].__code__), marshal.dumps(functions[1].__code__))
 
 
-def unpack_functions(bytecodes: Tuple[str]) -> Tuple[Callable[..., Any]]:
-    """Unpacks a tuple of two bytecode strings into a tuple of functions.
+def unpack_functions(bytecodes: Tuple[bytes, bytes]) -> Tuple[Callable[..., Any], Callable[..., Any]]:
+    """Unpacks a tuple of two bytecode sequences into a tuple of functions.
     Default function names are "p1" and "p2".
     """
     return (
@@ -65,7 +67,7 @@ def get_scores(
     both_coop: int = POINTS_BOTH_COOPERATE,
     loser: int = POINTS_DIFFERENT_LOSER,
     winner: int = POINTS_DIFFERENT_WINNER
-) -> List[int]:
+) -> List[float]:
     """
     Calculates the points each player has given their set of moves.
 
@@ -84,7 +86,7 @@ def get_scores(
     Returns: a 2-element list of the points of player 1 and player 2.
     """
     # NOTE This should really return a tuple instead of a list.
-    results = [0,0]
+    results = [0.0,0.0]
     for i in range(len(player1_moves)):
         if player1_moves[i]:
             if player2_moves[i]:
@@ -104,16 +106,16 @@ def get_scores(
 
 
 def play_match(
-    code_strs: Tuple[str],
+    bytecode: Tuple[bytes, bytes],
     noise: bool = NOISE,
     rounds: int = ROUNDS,
     num_games: int = NOISE_GAMES_TILL_AVG
-) -> List[int]:
+) -> Optional[List[float]]:
     """
     Plays a match of Iterated Prisoner's Dilemma between two players.
 
     Arguments:
-    - `code_strs`: a tuple of the bytecode representations of the two players.
+    - `bytecode`: a tuple of the bytecode representations of the two players.
     - `noise`: whether or not noise is enabled.
     - `rounds`: the number of rounds for the game.
     - `num_games`: the number of games to play before averaging results if noise is on.
@@ -122,7 +124,7 @@ def play_match(
 
     Returns: a 2-element list of their scores.
     """
-    player1, player2 = unpack_functions(code_strs)
+    player1, player2 = unpack_functions(bytecode)
     games = []
     for _g in range(num_games if noise else 1):
         player1moves = []

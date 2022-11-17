@@ -1,3 +1,5 @@
+"""Submodule for handling inputs. Responsible for spreadsheet fetching, pastebin downloads, function verification/loading."""
+
 import gspread
 import requests
 from tqdm import tqdm
