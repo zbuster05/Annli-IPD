@@ -1,3 +1,5 @@
+"""Specify global parameters in this submodule."""
+
 # simulation specs
 NOISE = True # whether or not this tournament has noise
 NOISE_LEVEL = 0.1 # percentage noise; only used if NOISE is set to True
@@ -19,5 +21,13 @@ INCLUDE_DEFAULTS = True
 # however, it will cause problems if functions that are supposed to be blacklisted are not.
 # thus, only set this variable to false if you are confident there has been no changes made to the submission sheet
 RELOAD_BLACKLIST = True
+
+# the columns of the spreadsheet that correspond to the
+# student name, regular strategies, and noise strategies
+SHEET_NAME = "IPD Player Strategies"
+TAB_NAME = "Form Responses 1"
+STUDENT_NAME_COL = 1
+REGULAR_STRAT_COL = 2
+NOISE_STRAT_COL = 3
 
 DEBUG_MODE = True # Set this to False.

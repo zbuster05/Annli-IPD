@@ -5,39 +5,13 @@ import copy
 import gspread
 import gspread_dataframe
 
-from output_locations import *
-
-
-# gets clean set of data from json of raw simulation output
-# outputs dictionary of dictionaries, where each key (for both dimensions) is a strategy. the values of the nested dictionaries are pairs of scores for the two functions, in a list.
-# the first value in the pair is the function of the outer dictionary key, while the second is the inner one.
-# for example, clean_data["f1"]["f2"] = [0,10] means f1 scored 0 and f2 scored 10.
-def get_clean_data():
-
-    # read data from json where raw output is logged
-    raw_data = {}
-    with open(RAW_OUT_LOCATION, 'r') as fp:
-        raw_data = json.loads(fp.read())
-
-    # create copy of this data that excludes the exact scores per round
-    # clean_data = copy.deepcopy(raw_data)
-    # for k in list(clean_data.keys()):
-    #     for j in list(clean_data[k].keys()):
-    #       if (type(clean_data[k][j])== dict):
-    #         for key in list(clean_data[k][j].keys()):
-    #             if key == "details":
-    #                 del clean_data[k][j][key]
-    # for k in list(clean_data.keys()):
-    #     for j in list(clean_data[k].keys()):
-    #       if (type(clean_data[k][j])== dict):
-    #         clean_data[k][j] = list(clean_data[k][j].values())[0]
-    return raw_data
-
+from .output_locations import *
 
 # returns pairwise scores for all functions as a pandas dataframe.
 # column is first function, row is second function.
 def get_pairwise():
-    clean_data = get_clean_data()
+    with open(RAW_OUT_LOCATION, 'r') as fp:
+        clean_data = json.loads(fp.read())
     pairwise = pd.DataFrame.from_dict(clean_data)
     return pairwise
 
@@ -45,8 +19,8 @@ def get_pairwise():
 # returns functions ranked by total score as pandas dataframe
 # also lists each function's average score and average margin (how much higher do they score compared to opponent)
 def get_ranking():
-
-    clean_data = get_clean_data()
+    with open(RAW_OUT_LOCATION, 'r') as fp:
+        clean_data = json.loads(fp.read())
     all_stats = []
 
     # calculates statistics for each function
@@ -87,34 +61,43 @@ def get_summary():
 
 # retrieves all statistics (pairwise, ranking, and summary) and updates them on google spreadsheet.
 # this spreadsheet can be found here: https://docs.google.com/spreadsheets/d/138rZ0hdy4MfFmvb1wZqgmeckGUpNl0N0T4wpAPXWeZE/edit?usp=sharing
-def update_sheet():
+def update_sheet(spreadsheet_name: str="IPD LATEST RUN Results") -> None:
 
     print("Updating results spreadsheet...")
 
     # accesses correct google spreadsheet for results
     service_account = gspread.service_account(filename="service_account.json")
-    spreadsheet = service_account.open("IPD LATEST RUN Results")
+    try: 
+        spreadsheet = service_account.open(spreadsheet_name)
+    except gspread.SpreadsheetNotFound:
+        spreadsheet = service_account.create(spreadsheet_name)
 
     # updates summary
-    summary_sheet = spreadsheet.worksheet("Summary Statistics")
+    try:
+        summary_sheet = spreadsheet.worksheet("Summary Statistics")
+    except gspread.WorksheetNotFound:
+        summary_sheet = spreadsheet.add_worksheet("Summary Statistics", rows="100", cols="20")
     summary_sheet.clear()
     gspread_dataframe.set_with_dataframe(worksheet=summary_sheet,dataframe=get_summary(),include_index=True,include_column_header=False,resize=True)
 
     # updates ranking
-    ranking_sheet = spreadsheet.worksheet("Ranking")
+    try:
+        ranking_sheet = spreadsheet.worksheet("Ranking")
+    except gspread.WorksheetNotFound:
+        ranking_sheet = spreadsheet.add_worksheet("Ranking", rows="100", cols="20")
+
     ranking_sheet.clear()
     gspread_dataframe.set_with_dataframe(worksheet=ranking_sheet,dataframe=get_ranking(),include_index=False,include_column_header=True,resize=True)
 
     # updates pairwise scores
-    pairwise_sheet = spreadsheet.worksheet("Pairwise Scores")
-    pairwise_sheet.clear()
+    try:
+        pairwise_sheet = spreadsheet.worksheet("Pairwise Scores")
+    except gspread.WorksheetNotFound:
+        pairwise_sheet = spreadsheet.add_worksheet("Pairwise Scores", rows="100", cols="20")
 
+    pairwise_sheet.clear()
     # reverse order of score reporting
     clean_data = get_pairwise()
-    for k in list(clean_data.keys()):
-        for j in list(clean_data[k].keys()):
-            clean_data[k][j] = list(reversed(clean_data[k][j]))
-
     gspread_dataframe.set_with_dataframe(worksheet=pairwise_sheet,dataframe=clean_data,include_index=True,include_column_header=True,resize=True)
 
     print("Updated results spreadsheet.")
