@@ -1,9 +1,10 @@
 .DS_Store
 service_account.json
+*json
 *.json # redundant, but the API key should really be its own line anyway just in case
 /problems.txt
 *.log
-/__pycache__/
+__pycache__
 poetry.lock
-
+*cache*
 *.svg # for profile outputs
